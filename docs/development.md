@@ -13,15 +13,21 @@ Add the following entries to your local DNS server or `/etc/hosts`:
 ```
 127.0.0.1  portal.gasket-dev.local
 127.0.0.1  traefik.gasket-dev.local
+127.0.0.1  traefik-metrics.gasket-dev.local
 127.0.0.1  authentik.gasket-dev.local
+127.0.0.1  authentik-metrics.gasket-dev.local
 127.0.0.1  opensearch.gasket-dev.local
 127.0.0.1  opensearch-dashboard.gasket-dev.local
 127.0.0.1  prometheus.gasket-dev.local
 127.0.0.1  grafana.gasket-dev.local
 127.0.0.1  open-webui.gasket-dev.local
 127.0.0.1  ollama-external.gasket-dev.local
+127.0.0.1  ollama-external-metrics.gasket-dev.local
 127.0.0.1  ollama-internal.gasket-dev.local
-127.0.0.1  code.gasket-dev.local
+127.0.0.1  ollama-internal-metrics.gasket-dev.local
+127.0.0.1  code-1.gasket-dev.local
+127.0.0.1  code-2.gasket-dev.local
+127.0.0.1  code-3.gasket-dev.local
 ```
 
 ## Running the Environment
@@ -32,21 +38,33 @@ git clone https://github.com/Gasket-Gateway/development.git
 
 cd development
 
-# Start all services
+# Start all supporting services
 bash start-all.sh
+
+# Stop all services
+bash stop-all.sh
 ```
 
 !!! note
-You will need to start the Gasket portal separately (from the `gasket` repo).
+`start-all.sh` delegates to each service's `start.sh`. Traefik's `start.sh` will automatically
+generate a self-signed wildcard TLS certificate for `*.gasket-dev.local` on first run.
+
+!!! note
+You will need to start the Gasket portal separately:
+`bash
+    bash gasket-portal/start.sh
+    `
+This requires the `gasket:dev` Docker image to be built from the `gasket` repo first.
 
 ## Services
 
 ### Gasket Portal
 
-The Gasket application itself. Assumes you are running it separately (from the `gasket` repo).
+The Gasket application itself. Three instances for HA validation, load balanced by Traefik.
 
 - URL: [portal.gasket-dev.local](https://portal.gasket-dev.local) → load balanced across `:5000`, `:5001`, `:5002`
 - Traefik uses the `/health` endpoint to validate backend availability before load balancing
+- Requires `gasket:dev` image built from the `gasket` repo — start separately: `bash gasket-portal/start.sh`
 
 ### Traefik
 
@@ -98,6 +116,25 @@ Stubs OpenAI-compliant backends. Two instances simulate multiple independent end
 
 ### Code Server
 
-Provides a browser-based VS Code environment for validating the VSCode Continue plugin use cases.
+Three separate browser-based VS Code environments, one per test user. Each instance is fronted by its own `oauth2-proxy` enforcing per-user OIDC access (both at the Authentik application policy level and via `--allowed-email` on the proxy).
 
-- URL: [code.gasket-dev.local](https://code.gasket-dev.local) → `:8443` (unverified HTTPS)
+| Instance | URL                                                        | oauth2-proxy Port | Allowed User |
+| -------- | ---------------------------------------------------------- | ----------------- | ------------ |
+| 1        | [code-1.gasket-dev.local](https://code-1.gasket-dev.local) | `4180`            | `user1`      |
+| 2        | [code-2.gasket-dev.local](https://code-2.gasket-dev.local) | `4181`            | `user2`      |
+| 3        | [code-3.gasket-dev.local](https://code-3.gasket-dev.local) | `4182`            | `user3`      |
+
+**Access control (two layers)**:
+
+1. Authentik app policy — each `code-server-N` application is bound to a single specific user pk
+2. oauth2-proxy `--allowed-email=userN@localhost` — secondary guard at the proxy level
+
+**Note on test user groups**:
+
+| Group           | Members             | Accesses                               |
+| --------------- | ------------------- | -------------------------------------- |
+| `test-users`    | user1, user2, user3 | Code Server (own instance), Open WebUI |
+| `gasket-users`  | user2, user3        | Gasket Gateway                         |
+| `gasket-admins` | user3               | Grafana, OpenSearch Dashboards         |
+
+User1 is intentionally excluded from `gasket-users` to support negative-path testing.
