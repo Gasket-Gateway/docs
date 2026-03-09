@@ -82,7 +82,7 @@ Provides a browser-based VS Code environment for validating the VSCode Continue 
 
 ### Gasket Portal
 
-The Gasket application itself. Assumes you are running it separately (e.g. from the `gasket` repo).
+The Gasket application itself. Assumes you are running it separately (from the `gasket` repo).
 
 - URL: [portal.gasket-dev.local](https://portal.gasket-dev.local) → load balanced across `:5000`, `:5001`, `:5002`
 - Traefik uses the `/health` endpoint to validate backend availability before load balancing
@@ -91,8 +91,12 @@ The Gasket application itself. Assumes you are running it separately (e.g. from 
 
 ```bash
 # Clone the development repo
-git clone https://github.com/ajackson/gg-development
+git clone https://github.com/Gasket-Gateway/development.git
+
+cd development
 
 # Start all services
-docker compose up -d
+bash start-all.sh
 ```
+
+Note: You will need to start the Gasket portal separately (from the `gasket` repo).

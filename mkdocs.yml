@@ -9,14 +9,14 @@ theme:
   palette:
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: teal
+      primary: black
       accent: cyan
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: teal
+      primary: black
       accent: cyan
       toggle:
         icon: material/weather-night
@@ -35,7 +35,7 @@ theme:
 nav:
   - Home: index.md
   - Architecture: architecture.md
-  - Requirements: requirements.md
+  - Project Requirements: requirements.md
   - Portal & Gateway:
       - API Key Management: api-keys.md
       - Monitoring & Quotas: quotas.md
