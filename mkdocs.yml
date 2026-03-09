@@ -1,0 +1,61 @@
+site_name: Gasket Gateway
+site_description: An API gateway for OpenAI-compliant inference backends with enterprise capabilities
+repo_url: https://github.com/Gasket-Gateway/docs
+repo_name: Gasket-Gateway/docs
+edit_uri: ""
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: cyan
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: cyan
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+  icon:
+    repo: fontawesome/brands/github
+
+nav:
+  - Home: index.md
+  - Architecture: architecture.md
+  - Requirements: requirements.md
+  - Portal & Gateway:
+      - API Key Management: api-keys.md
+      - Monitoring & Quotas: quotas.md
+      - Audit: audit.md
+      - Open WebUI Integration: open-webui.md
+      - Admin Panel: admin.md
+  - Development Environment: development.md
+  - Helm Deployment: helm.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
