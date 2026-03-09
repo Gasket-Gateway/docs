@@ -2,6 +2,14 @@
 
 Full functional requirements for the Gasket Gateway.
 
+## Application
+
+- Python Flask application
+- Supports multiple concurrent instances (high availability) sharing the same PostgreSQL, Prometheus, and OpenSearch, with OIDC session state persisted across instances
+- UI built with plain HTML, CSS, and JavaScript — no external UI libraries or JavaScript frameworks
+- `/health` endpoint returning 200 OK
+- `/metrics` endpoint returning Prometheus metrics, aggregated across all instances via PostgreSQL
+
 ## Configuration
 
 - YAML config file for all settings

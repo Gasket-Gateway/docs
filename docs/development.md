@@ -24,7 +24,29 @@ Add the following entries to your local DNS server or `/etc/hosts`:
 127.0.0.1  code.gasket-dev.local
 ```
 
+## Running the Environment
+
+```bash
+# Clone the development repo
+git clone https://github.com/Gasket-Gateway/development.git
+
+cd development
+
+# Start all services
+bash start-all.sh
+```
+
+!!! note
+You will need to start the Gasket portal separately (from the `gasket` repo).
+
 ## Services
+
+### Gasket Portal
+
+The Gasket application itself. Assumes you are running it separately (from the `gasket` repo).
+
+- URL: [portal.gasket-dev.local](https://portal.gasket-dev.local) → load balanced across `:5000`, `:5001`, `:5002`
+- Traefik uses the `/health` endpoint to validate backend availability before load balancing
 
 ### Traefik
 
@@ -79,24 +101,3 @@ Stubs OpenAI-compliant backends. Two instances simulate multiple independent end
 Provides a browser-based VS Code environment for validating the VSCode Continue plugin use cases.
 
 - URL: [code.gasket-dev.local](https://code.gasket-dev.local) → `:8443` (unverified HTTPS)
-
-### Gasket Portal
-
-The Gasket application itself. Assumes you are running it separately (from the `gasket` repo).
-
-- URL: [portal.gasket-dev.local](https://portal.gasket-dev.local) → load balanced across `:5000`, `:5001`, `:5002`
-- Traefik uses the `/health` endpoint to validate backend availability before load balancing
-
-## Running the Environment
-
-```bash
-# Clone the development repo
-git clone https://github.com/Gasket-Gateway/development.git
-
-cd development
-
-# Start all services
-bash start-all.sh
-```
-
-Note: You will need to start the Gasket portal separately (from the `gasket` repo).
