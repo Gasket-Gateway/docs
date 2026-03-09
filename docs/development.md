@@ -25,9 +25,6 @@ Add the following entries to your local DNS server or `/etc/hosts`:
 127.0.0.1  ollama-external-metrics.gasket-dev.local
 127.0.0.1  ollama-internal.gasket-dev.local
 127.0.0.1  ollama-internal-metrics.gasket-dev.local
-127.0.0.1  code-1.gasket-dev.local
-127.0.0.1  code-2.gasket-dev.local
-127.0.0.1  code-3.gasket-dev.local
 ```
 
 ## Running the Environment
@@ -113,28 +110,3 @@ Stubs OpenAI-compliant backends. Two instances simulate multiple independent end
 | -------- | ---------------------------------------------------------------------------- | ------------ |
 | External | [ollama-external.gasket-dev.local](https://ollama-external.gasket-dev.local) | `:12434`     |
 | Internal | [ollama-internal.gasket-dev.local](https://ollama-internal.gasket-dev.local) | `:11434`     |
-
-### Code Server
-
-Three separate browser-based VS Code environments, one per test user. Each instance is fronted by its own `oauth2-proxy` enforcing per-user OIDC access (both at the Authentik application policy level and via `--allowed-email` on the proxy).
-
-| Instance | URL                                                        | oauth2-proxy Port | Allowed User |
-| -------- | ---------------------------------------------------------- | ----------------- | ------------ |
-| 1        | [code-1.gasket-dev.local](https://code-1.gasket-dev.local) | `4180`            | `user1`      |
-| 2        | [code-2.gasket-dev.local](https://code-2.gasket-dev.local) | `4181`            | `user2`      |
-| 3        | [code-3.gasket-dev.local](https://code-3.gasket-dev.local) | `4182`            | `user3`      |
-
-**Access control (two layers)**:
-
-1. Authentik app policy — each `code-server-N` application is bound to a single specific user pk
-2. oauth2-proxy `--allowed-email=userN@localhost` — secondary guard at the proxy level
-
-**Note on test user groups**:
-
-| Group           | Members             | Accesses                               |
-| --------------- | ------------------- | -------------------------------------- |
-| `test-users`    | user1, user2, user3 | Code Server (own instance), Open WebUI |
-| `gasket-users`  | user2, user3        | Gasket Gateway                         |
-| `gasket-admins` | user3               | Grafana, OpenSearch Dashboards         |
-
-User1 is intentionally excluded from `gasket-users` to support negative-path testing.
