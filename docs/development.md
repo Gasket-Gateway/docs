@@ -49,7 +49,34 @@ bash reset-all.sh
 generate a self-signed wildcard TLS certificate for `*.gasket-dev.local` on first run.
 
 !!! note
-You will need to start the Gasket portal separately:
+You will need to start the Gasket portal separately
+
+## Test Users and Groups
+
+Authentik is provisioned with the following test accounts (all passwords: `password`):
+
+### Users
+
+| User    | Email           | Groups                                  |
+| ------- | --------------- | --------------------------------------- |
+| `user1` | user1@localhost | test-users                              |
+| `user2` | user2@localhost | test-users, gasket-users                |
+| `user3` | user3@localhost | test-users, gasket-users, gasket-admins |
+
+### Groups
+
+| Group         | Members      | Purpose                                                     |
+| ------------- | ------------ | ----------------------------------------------------------- |
+| test-users    | user1–3      | Open WebUI access                                           |
+| gasket-users  | user2, user3 | Gasket Gateway access (user1 excluded for negative testing) |
+| gasket-admins | user3        | Gasket admin privileges                                     |
+
+### Application Access
+
+| Application    | Bound Group  | Allowed Users       |
+| -------------- | ------------ | ------------------- |
+| Gasket Gateway | gasket-users | user2, user3        |
+| Open WebUI     | test-users   | user1, user2, user3 |
 
 ## Services
 
