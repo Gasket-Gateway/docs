@@ -2,7 +2,7 @@
 
 The Gasket development environment provides all supporting services needed to run and test Gasket locally, using Docker Compose.
 
-Source: [`development`](https://github.com/ajackson/gg) repository.
+Source: [`development`](https://github.com/Gasket-Gateway/development) repository.
 
 ## Prerequisites
 
@@ -12,6 +12,7 @@ Add the following entries to your local DNS server or `/etc/hosts`:
 
 ```
 127.0.0.1  portal.gasket-dev.local
+127.0.0.1  api.gasket-dev.local
 127.0.0.1  traefik.gasket-dev.local
 127.0.0.1  traefik-metrics.gasket-dev.local
 127.0.0.1  authentik.gasket-dev.local
@@ -22,9 +23,7 @@ Add the following entries to your local DNS server or `/etc/hosts`:
 127.0.0.1  grafana.gasket-dev.local
 127.0.0.1  open-webui.gasket-dev.local
 127.0.0.1  ollama-external.gasket-dev.local
-127.0.0.1  ollama-external-metrics.gasket-dev.local
 127.0.0.1  ollama-internal.gasket-dev.local
-127.0.0.1  ollama-internal-metrics.gasket-dev.local
 ```
 
 ## Running the Environment
@@ -40,6 +39,9 @@ bash start-all.sh
 
 # Stop all services
 bash stop-all.sh
+
+# Reset all services
+bash reset-all.sh
 ```
 
 !!! note
@@ -48,20 +50,16 @@ generate a self-signed wildcard TLS certificate for `*.gasket-dev.local` on firs
 
 !!! note
 You will need to start the Gasket portal separately:
-`bash
-    bash gasket-portal/start.sh
-    `
-This requires the `gasket:dev` Docker image to be built from the `gasket` repo first.
 
 ## Services
 
-### Gasket Portal
+### Gasket Portal/API
 
 The Gasket application itself. Three instances for HA validation, load balanced by Traefik.
 
 - URL: [portal.gasket-dev.local](https://portal.gasket-dev.local) → load balanced across `:5000`, `:5001`, `:5002`
+- URL: [api.gasket-dev.local](https://api.gasket-dev.local) → load balanced across `:5000`, `:5001`, `:5002`
 - Traefik uses the `/health` endpoint to validate backend availability before load balancing
-- Requires `gasket:dev` image built from the `gasket` repo — start separately: `bash gasket-portal/start.sh`
 
 ### Traefik
 
