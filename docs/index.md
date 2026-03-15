@@ -2,24 +2,9 @@
 
 Gasket is an API gateway for OpenAI-compliant inference backends. It provides a portal for users to work with these backends within an organisational context, including enterprise capabilities such as SSO, organisational policy, auditing, monitoring, and quotas.
 
-## What is Gasket?
+## Architecture
 
-```
-                     ┌──────────────────────────────┐
-  Browser Users      │             Gasket           │
-  ──(OIDC SSO)────►o─│───Portal UI                  │
-                     │                              │    ┌─► OpenAI Backend A
-  API Clients        │   Gateway API ───────────────┼────┼─► OpenAI Backend B
-  ──(API key)─────►o─│───(proxy / agg)              │    └─► OpenAI Backend C
-  (Open WebUI,       │                              │
-   VSCode, etc.)     └───────────────────┬──────────┘
-                                         │
-            ┌───────────────┬────────────┼──────────────┐
-            │               │            │              │
-      PostgreSQL       OpenSearch   Prometheus      OIDC Provider
-      (keys, prefs,   (audit logs) (metrics,           (SSO)
-    quotas, blocks)                 quota queries)
-```
+![System Diagram](assets/diagrams/architecture.drawio.png)
 
 ## Key Features
 
@@ -33,12 +18,12 @@ Gasket is an API gateway for OpenAI-compliant inference backends. It provides a 
 
 ## Repositories
 
-| Repo          | Description                                                                                              |
-| ------------- | -------------------------------------------------------------------------------------------------------- |
-| `gasket`      | The main Gasket application (Flask, portal UI, gateway)                                                  |
-| `development` | Local development environment (Traefik, Authentik, OpenSearch, Prometheus, Grafana, Ollama, Code Server) |
-| `helm`        | Kubernetes Helm charts for production deployment                                                         |
-| `docs`        | This documentation site                                                                                  |
+| Repo                                                         | Description                                                                                              |
+| ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| [gasket](https://github.com/Gasket-Gateway/gasket)           | The main Gasket application (Flask, portal UI, gateway)                                                  |
+| [development](https://github.com/Gasket-Gateway/development) | Local development environment (Traefik, Authentik, OpenSearch, Prometheus, Grafana, Ollama, Code Server) |
+| [helm](https://github.com/Gasket-Gateway/helm)               | Kubernetes Helm charts for production deployment                                                         |
+| [docs](https://github.com/Gasket-Gateway/docs)               | This documentation site                                                                                  |
 
 ## Quick Links
 

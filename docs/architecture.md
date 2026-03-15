@@ -4,22 +4,7 @@ Gasket is a Python Flask application that acts as an authenticated proxy and por
 
 ## System Diagram
 
-```
-                     ┌──────────────────────────────┐
-  Browser Users      │             Gasket           │
-  ──(OIDC SSO)────►o─│───Portal UI                  │
-                     │                              │    ┌─► OpenAI Backend A
-  API Clients        │   Gateway API ───────────────┼────┼─► OpenAI Backend B
-  ──(API key)─────►o─│───(proxy / agg)              │    └─► OpenAI Backend C
-  (Open WebUI,       │                              │
-   VSCode, etc.)     └───────────────────┬──────────┘
-                                         │
-            ┌───────────────┬────────────┼──────────────┐
-            │               │            │              │
-      PostgreSQL       OpenSearch   Prometheus      OIDC Provider
-      (keys, prefs,   (audit logs) (metrics,           (SSO)
-    quotas, blocks)                 quota queries)
-```
+![System Diagram](assets/diagrams/architecture.drawio.png)
 
 ## Components
 
