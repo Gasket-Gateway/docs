@@ -1,0 +1,256 @@
+/*
+ * Gasket Gateway — MkDocs Material Neo-Brutalism Override
+ *
+ * Matches the Gasket portal UI theme:
+ *   - Courier New monospaced font
+ *   - Hard box shadows (no blur)
+ *   - Thick borders
+ *   - Richer blue accent
+ *   - Light/dark mode aligned to gateway palette
+ */
+
+/* ═══════════════════════════════════════════════════════════════════
+   FONTS — Courier New monospace everywhere
+   ═══════════════════════════════════════════════════════════════════ */
+:root {
+  --md-text-font: "Courier New", Courier, monospace;
+  --md-code-font: "Courier New", Courier, monospace;
+}
+
+body, input, button, select, textarea {
+  font-family: "Courier New", Courier, monospace !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PALETTE — Light mode
+   ═══════════════════════════════════════════════════════════════════ */
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: #2563eb;
+  --md-primary-fg-color--light: #3b82f6;
+  --md-primary-fg-color--dark: #1d4ed8;
+  --md-primary-bg-color: #ffffff;
+  --md-accent-fg-color: #2563eb;
+  --md-default-bg-color: #f2f2f2;
+  --md-default-fg-color: #1a1a1a;
+  --md-default-fg-color--light: #4a4a4a;
+  --md-default-fg-color--lighter: #7a7a7a;
+  --md-code-bg-color: #e6e6e6;
+  --md-typeset-a-color: #2563eb;
+  --md-shadow-z1: 3px 3px 0 #1a1a1a;
+  --md-shadow-z2: 5px 5px 0 #1a1a1a;
+  --md-shadow-z3: 8px 8px 0 #1a1a1a;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PALETTE — Dark mode
+   ═══════════════════════════════════════════════════════════════════ */
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #3b82f6;
+  --md-primary-fg-color--light: #60a5fa;
+  --md-primary-fg-color--dark: #2563eb;
+  --md-primary-bg-color: #1c1c1e;
+  --md-accent-fg-color: #3b82f6;
+  --md-default-bg-color: #1c1c1e;
+  --md-default-fg-color: #f0f0f0;
+  --md-default-fg-color--light: #c0c0c0;
+  --md-default-fg-color--lighter: #808080;
+  --md-code-bg-color: #2a2a2e;
+  --md-typeset-a-color: #60a5fa;
+  --md-shadow-z1: 3px 3px 0 #000000;
+  --md-shadow-z2: 5px 5px 0 #000000;
+  --md-shadow-z3: 8px 8px 0 #000000;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   HEADER — Thick border, hard shadow
+   ═══════════════════════════════════════════════════════════════════ */
+.md-header {
+  border-bottom: 3px solid var(--md-default-fg-color);
+  box-shadow: var(--md-shadow-z1);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   NAVIGATION TABS
+   ═══════════════════════════════════════════════════════════════════ */
+.md-tabs {
+  border-bottom: 3px solid var(--md-default-fg-color);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   SIDEBAR
+   ═══════════════════════════════════════════════════════════════════ */
+.md-sidebar {
+  border-right: 3px solid var(--md-default-fg-color);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   CONTENT — Typography and elements
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Headings — uppercase with accent underline */
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3 {
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.md-typeset h1 {
+  border-bottom: 4px solid var(--md-accent-fg-color);
+  padding-bottom: 0.3em;
+}
+
+.md-typeset h2 {
+  border-bottom: 3px solid var(--md-default-fg-color--lighter);
+  padding-bottom: 0.2em;
+}
+
+/* Inline code — thick border */
+.md-typeset code {
+  border: 2px solid var(--md-default-fg-color--lighter);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+  font-family: "Courier New", Courier, monospace !important;
+}
+
+/* Code blocks — hard shadow */
+.md-typeset pre {
+  border: 3px solid var(--md-default-fg-color);
+  border-radius: 4px;
+  box-shadow: var(--md-shadow-z1);
+}
+
+/* Tables — thick borders */
+.md-typeset table:not([class]) {
+  border: 3px solid var(--md-default-fg-color);
+  box-shadow: var(--md-shadow-z1);
+}
+
+.md-typeset table:not([class]) th,
+.md-typeset table:not([class]) td {
+  border: 2px solid var(--md-default-fg-color);
+  padding: 0.6em 1em;
+}
+
+.md-typeset table:not([class]) th {
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   ADMONITIONS — Neo-brutalism style
+   ═══════════════════════════════════════════════════════════════════ */
+.md-typeset .admonition,
+.md-typeset details {
+  border: 3px solid var(--md-default-fg-color) !important;
+  border-radius: 4px;
+  box-shadow: var(--md-shadow-z1);
+  border-left-width: 6px !important;
+}
+
+.md-typeset .admonition-title,
+.md-typeset summary {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 2px solid var(--md-default-fg-color);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   BUTTONS & LINKS
+   ═══════════════════════════════════════════════════════════════════ */
+.md-typeset a {
+  font-weight: 600;
+}
+
+.md-typeset a:hover {
+  text-decoration: underline;
+}
+
+/* Search bar */
+.md-search__input {
+  border: 3px solid var(--md-default-fg-color) !important;
+  border-radius: 4px !important;
+  font-family: "Courier New", Courier, monospace !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════════════════════ */
+.md-footer {
+  border-top: 3px solid var(--md-default-fg-color);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   CONTENT TABS — Neo-brutalism
+   ═══════════════════════════════════════════════════════════════════ */
+.md-typeset .tabbed-labels > label {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.85rem;
+  border: 2px solid transparent;
+}
+
+.md-typeset .tabbed-labels > label:hover {
+  border-color: var(--md-default-fg-color);
+}
+
+.md-typeset .tabbed-labels > label--active,
+.md-typeset .tabbed-set > input:checked + label {
+  border: 2px solid var(--md-default-fg-color);
+  border-bottom-color: var(--md-default-bg-color);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   CARDS (if using grid plugin)
+   ═══════════════════════════════════════════════════════════════════ */
+.md-typeset .grid > .card {
+  border: 3px solid var(--md-default-fg-color);
+  border-radius: 4px;
+  box-shadow: var(--md-shadow-z1);
+}
+
+.md-typeset .grid > .card:hover {
+  box-shadow: var(--md-shadow-z2);
+  transform: translate(-2px, -2px);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   SCROLLBAR — subtle styling
+   ═══════════════════════════════════════════════════════════════════ */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--md-default-bg-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--md-default-fg-color--lighter);
+  border: 2px solid var(--md-default-bg-color);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   LOGO — Switch for dark/light (handled via Material overrides)
+   ═══════════════════════════════════════════════════════════════════ */
+.md-header__button.md-logo img {
+  height: 36px;
+  width: auto;
+}
+
+/* Hide the site title text — the logo SVG already contains "GASKET" */
+.md-header__topic .md-ellipsis {
+  display: none;
+}
+
+/*  ═══════════════════════════════════════════════════════════════════
+   LAYOUT — Wider content area (official MkDocs Material approach)
+   ═══════════════════════════════════════════════════════════════════ 
+.md-grid {
+  max-width: initial;
+} */
