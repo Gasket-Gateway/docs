@@ -85,10 +85,13 @@ Authentik is provisioned with the following test accounts (all passwords: `passw
 
 The Gasket application itself. Three instances for HA validation, load balanced by Traefik.
 
-- URL: [portal.gasket-dev.local](https://portal.gasket-dev.local) → load balanced across `:5000`, `:5001`, `:5002`
-- URL: [api.gasket-dev.local](https://api.gasket-dev.local) → load balanced across `:5000`, `:5001`, `:5002`
-- URL: [metrics.gasket-dev.local](https://metrics.gasket-dev.local) → load balanced across `:9050`, `:9051`, `:9052`
+- Portal: [portal.gasket-dev.local](https://portal.gasket-dev.local) → load balanced across `:5000`, `:5001`, `:5002`
+- API: [api.gasket-dev.local](https://api.gasket-dev.local) → load balanced across `:5000`, `:5001`, `:5002`
+- Metrics: [metrics.gasket-dev.local/metrics](https://metrics.gasket-dev.local/metrics) → load balanced across `:9050`, `:9051`, `:9052`
 - Traefik uses the `/health` endpoint to validate backend availability before load balancing
+  - Portal Health: [portal.gasket-dev.local/health](https://portal.gasket-dev.local/health) → load balanced across `:5000`, `:5001`, `:5002`
+  - API Health: [api.gasket-dev.local/health](https://api.gasket-dev.local/health) → load balanced across `:5000`, `:5001`, `:5002`
+  - Metrics Health: [metrics.gasket-dev.local/health](https://metrics.gasket-dev.local/health) → load balanced across `:9050`, `:9051`, `:9052`
 
 ### Traefik
 
@@ -96,13 +99,15 @@ Serves as an ingress proxy — handles TLS termination and hostname-based routin
 
 - Exposes ports `80` (redirects to HTTPS) and `443`
 - UI: [traefik.gasket-dev.local](https://traefik.gasket-dev.local)
+- Metrics: [traefik-metrics.gasket-dev.local/metrics](https://traefik-metrics.gasket-dev.local/metrics)
 
 ### Authentik
 
 Provides OIDC for user authentication to the portal UI and all other dev environment tools. Includes test users for different access scenarios.
 
-- URL: [authentik.gasket-dev.local](https://authentik.gasket-dev.local)
+- UI: [authentik.gasket-dev.local](https://authentik.gasket-dev.local)
 - Routed via Traefik → `authentik.gasket-dev.local:9443` (unverified HTTPS)
+- Metrics: [authentik-metrics.gasket-dev.local/metrics](https://authentik-metrics.gasket-dev.local/metrics)
 
 ### OpenSearch
 
@@ -115,19 +120,19 @@ Stores Gasket audit records.
 
 Scrapes and stores Gasket metrics for monitoring and quota evaluation.
 
-- URL: [prometheus.gasket-dev.local](https://prometheus.gasket-dev.local) → `:9090`
+- UI: [prometheus.gasket-dev.local](https://prometheus.gasket-dev.local) → `:9090`
 
 ### Grafana
 
 Used to validate Gasket Grafana dashboards.
 
-- URL: [grafana.gasket-dev.local](https://grafana.gasket-dev.local) → `:3000`
+- UI: [grafana.gasket-dev.local](https://grafana.gasket-dev.local) → `:3000`
 
 ### Open WebUI
 
 Validates Open WebUI use cases against the Gasket API.
 
-- URL: [open-webui.gasket-dev.local](https://open-webui.gasket-dev.local) → `:3001`
+- UI: [open-webui.gasket-dev.local](https://open-webui.gasket-dev.local) → `:3001`
 
 ### Ollama
 
