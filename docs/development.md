@@ -13,6 +13,7 @@ Add the following entries to your local DNS server or `/etc/hosts`:
 ```
 127.0.0.1  portal.gasket-dev.local
 127.0.0.1  api.gasket-dev.local
+127.0.0.1  metrics.gasket-dev.local
 127.0.0.1  traefik.gasket-dev.local
 127.0.0.1  traefik-metrics.gasket-dev.local
 127.0.0.1  authentik.gasket-dev.local
@@ -80,12 +81,13 @@ Authentik is provisioned with the following test accounts (all passwords: `passw
 
 ## Services
 
-### Gasket Portal/API
+### Gasket Portal/API/Metrics
 
 The Gasket application itself. Three instances for HA validation, load balanced by Traefik.
 
 - URL: [portal.gasket-dev.local](https://portal.gasket-dev.local) → load balanced across `:5000`, `:5001`, `:5002`
 - URL: [api.gasket-dev.local](https://api.gasket-dev.local) → load balanced across `:5000`, `:5001`, `:5002`
+- URL: [metrics.gasket-dev.local](https://metrics.gasket-dev.local) → load balanced across `:9050`, `:9051`, `:9052`
 - Traefik uses the `/health` endpoint to validate backend availability before load balancing
 
 ### Traefik

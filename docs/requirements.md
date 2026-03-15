@@ -4,11 +4,12 @@ Full functional requirements for the Gasket Gateway.
 
 ## Application
 
-- Python Flask application
+- Python Flask application (Exposed on default port `5000` and metrics port `9050`)
 - Supports multiple concurrent instances (high availability) sharing the same PostgreSQL, Prometheus, and OpenSearch, with OIDC session state persisted across instances
 - UI built with plain HTML, CSS, and JavaScript — no external UI libraries or JavaScript frameworks
-- `/health` endpoint returning 200 OK
-- `/metrics` endpoint returning Prometheus metrics, aggregated across all instances via PostgreSQL
+- `:5000/health` endpoint returning 200 OK
+- `:9050/health` endpoint returning 200 OK
+- `:9050/metrics` endpoint returning Prometheus metrics, aggregated across all instances via PostgreSQL (uses different port `9050` to isolate from main traffic)
 
 ## Configuration
 
