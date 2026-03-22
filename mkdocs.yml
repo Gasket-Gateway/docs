@@ -51,6 +51,7 @@ nav:
       - Open WebUI Integration: open-webui.md
       - Admin Panel: admin.md
   - Development Environment: development.md
+  - Schema Management: schema.md
   - Helm Deployment: helm.md
   - About: about.md
 

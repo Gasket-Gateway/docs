@@ -11,6 +11,14 @@ Full functional requirements for the Gasket Gateway.
 - `:9050/health` endpoint returning 200 OK
 - `:9050/metrics` endpoint returning Prometheus metrics, aggregated across all instances via PostgreSQL (uses different port `9050` to isolate from main traffic)
 
+## Database & Schema Management
+
+- All database schema changes must be managed via Alembic migrations
+- Migrations are automatically applied on application startup (`alembic upgrade head`)
+- Every migration must include both `upgrade()` and `downgrade()` functions
+- Migrations are append-only — never modify a migration that has been applied to any environment
+- Migration files live in `migrations/versions/` and are tracked in version control
+
 ## Configuration
 
 - YAML config file for all settings
