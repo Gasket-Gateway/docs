@@ -52,6 +52,7 @@ nav:
       - Admin Panel: admin.md
   - Development Environment: development.md
   - Helm Deployment: helm.md
+  - About: about.md
 
 markdown_extensions:
   - admonition
