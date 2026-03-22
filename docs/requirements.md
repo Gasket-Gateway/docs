@@ -5,7 +5,7 @@ Full functional requirements for the Gasket Gateway.
 ## Application
 
 - Python Flask application (Exposed on default port `5000` and metrics port `9050`)
-- Supports multiple concurrent instances (high availability) sharing the same PostgreSQL, Prometheus, and OpenSearch, with OIDC session state persisted across instances
+- Supports multiple concurrent instances (high availability) sharing the same PostgreSQL and OpenSearch, with OIDC session state persisted across instances
 - UI built with plain HTML, CSS, and JavaScript — no external UI libraries or JavaScript frameworks
 - `:5000/health` endpoint returning 200 OK
 - `:9050/health` endpoint returning 200 OK
@@ -14,7 +14,7 @@ Full functional requirements for the Gasket Gateway.
 ## Configuration
 
 - YAML config file for all settings
-- Config option to disable TLS verification for the OIDC provider, Prometheus, and OpenSearch
+- Config option to disable TLS verification for the OIDC provider and OpenSearch
 - Config option for portal banners (banner content, banner colour)
 - Default light/dark mode preference from config
 
@@ -41,6 +41,16 @@ Backend profiles define how access to one or more OpenAI-compliant backends is g
 - Usage quota configurations (see [Monitoring & Quotas](quotas.md))
 - Maximum number of active API keys per user
 - Whether Open WebUI header support is enabled (see [Open WebUI Integration](open-webui.md))
+- Backend profiles are created and managed via the admin portal
+
+## OpenAI Backends
+
+OpenAI backends represent individual upstream inference endpoints:
+
+- Name, base URL, and API key for the upstream service
+- Created and managed via the admin portal
+- Backends can optionally be pre-defined in `config.yaml` — these are automatically populated into the database on startup and are **read-only** in the admin portal (cannot be edited or deleted via the UI)
+- Admin-created backends (not from config) can be freely edited and deleted
 
 ## User Portal
 
@@ -66,8 +76,8 @@ See [API Key Management](api-keys.md) for the full user flow.
 - View API key value
 - Edit VSCode Continue config template opt-in
 - Edit Open WebUI header support opt-in
-- View usage metrics from Prometheus
-- View quota usage from Prometheus
+- View usage metrics
+- View quota usage
 
 **Key management:**
 
@@ -114,12 +124,14 @@ See [Open WebUI Integration](open-webui.md) for full details.
 
 See [Admin Panel](admin.md) for full details.
 
-- Connection status for: PostgreSQL, OIDC provider, OpenSearch, Prometheus
+- Connection status for: PostgreSQL, OIDC provider, OpenSearch, all OpenAI backends
+- **OpenAI backend management:** add, edit, and delete backends (config-defined backends are read-only)
+- **Backend profile management:** create, edit, and delete profiles with associated backends and policies
 - List all API keys with usage metrics/quotas and active block statuses
 - Revoke and restore any API key
 - Filter and search API keys
 - Fetch and view audit records from OpenSearch
-- Usage metrics dashboard from Prometheus
+- Usage metrics dashboard from PostgreSQL
 - Usage quotas dashboard including current block statuses
 - OpenAI backend dashboard showing connection status and usage metrics
 - Backend profile dashboard showing usage metrics and quotas

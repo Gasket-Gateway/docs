@@ -43,6 +43,7 @@ nav:
   - Home: index.md
   - Architecture: architecture.md
   - Project Requirements: requirements.md
+  - Configuration Reference: configuration.md
   - Portal & Gateway:
       - API Key Management: api-keys.md
       - Monitoring & Quotas: quotas.md
