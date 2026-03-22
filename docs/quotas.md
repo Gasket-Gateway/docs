@@ -1,8 +1,8 @@
 # Monitoring & Quotas
 
-Gasket uses Prometheus for token usage metrics and enforces configurable quotas per backend profile.
+Gasket provides metrics for token usage and enforces configurable quotas per backend profile.
 
-## Prometheus Metrics
+## Metrics
 
 All metrics carry the following labels:
 
@@ -54,18 +54,15 @@ Check database for active block status
 Proxy request to backend
       │
       ▼
-Query Prometheus to evaluate quota consumption
-      │
-      ├─ Prometheus unavailable? ──► Allow (no active block in DB)
-      │
-      ├─ Quota exceeded? ──► Write block status + expiry to database
-      │
-      ▼
 Allow response through
+      │
+      +-trigger background task-+
+                                |
+                                ▼
+                  Query to evaluate quota consumption
+                        │
+                        ├─ Quota exceeded? ──► Write block status + expiry to database
 ```
-
-!!! note "Prometheus Availability"
-If Prometheus is unavailable, requests are **allowed through** provided there is no active block status already in the database. This ensures Gasket degrades gracefully.
 
 ## Block Status
 

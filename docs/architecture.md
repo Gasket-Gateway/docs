@@ -14,7 +14,7 @@ Gasket is a Python Flask application that acts as an authenticated proxy and por
 | **Gateway API**   | Python Flask            | Proxies and aggregates requests to configured OpenAI-compliant backends. Enforces access, quotas, and audit. |
 | **PostgreSQL**    | PostgreSQL              | Stores API keys, user preferences, policy acceptance records, and per-user quota block status.               |
 | **OpenSearch**    | OpenSearch              | Stores audit records (request metadata and optionally full request/response content).                        |
-| **Prometheus**    | Prometheus              | Stores token usage and latency metrics. Used to evaluate quota consumption after each request.               |
+| **Prometheus**    | Prometheus              | Stores token usage and latency metrics.                                                                      |
 | **OIDC Provider** | Any OIDC-compliant IdP  | Handles SSO login. OIDC groups control user access, admin panel access, and backend profile access.          |
 
 ## Technology Stack

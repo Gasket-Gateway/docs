@@ -11,7 +11,6 @@ Connection status indicators for all dependencies:
 | PostgreSQL    | Connected / Error |
 | OIDC Provider | Connected / Error |
 | OpenSearch    | Connected / Error |
-| Prometheus    | Connected / Error |
 
 ## API Key Management
 

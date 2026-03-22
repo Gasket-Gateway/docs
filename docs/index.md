@@ -11,7 +11,7 @@ Gasket is an API gateway for OpenAI-compliant inference backends. It provides a 
 - **OIDC Single Sign-On** — Login via your organisation's identity provider
 - **Backend Profiles** — Group and govern access to multiple OpenAI-compatible backends
 - **API Key Management** — Users create and manage API keys with per-profile policies
-- **Quotas & Monitoring** — Token usage quotas enforced via Prometheus metrics
+- **Quotas & Monitoring** — Token usage quotas
 - **Audit Logging** — Request metadata (and optionally full content) written to OpenSearch
 - **Admin Panel** — Full visibility into keys, audit records, quotas and backend health
 - **Open WebUI & VSCode Support** — Native integration with Open WebUI and the Continue extension
