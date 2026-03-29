@@ -50,6 +50,8 @@ Backend profiles define how access to one or more OpenAI-compliant backends is g
 - Maximum number of active API keys per user
 - Whether Open WebUI header support is enabled (see [Open WebUI Integration](open-webui.md))
 - Backend profiles are created and managed via the admin portal
+- Profiles can optionally be pre-defined in `config.yaml` — these are automatically populated into the database on startup and are **read-only** in the admin portal (cannot be edited or deleted via the UI)
+- Admin-created profiles (not from config) can be freely edited and deleted
 
 ## OpenAI Backends
 
@@ -134,7 +136,7 @@ See [Admin Panel](admin.md) for full details.
 
 - Connection status for: PostgreSQL, OIDC provider, OpenSearch, all OpenAI backends
 - **OpenAI backend management:** add, edit, and delete backends (config-defined backends are read-only)
-- **Backend profile management:** create, edit, and delete profiles with associated backends and policies
+- **Backend profile management:** create, edit, and delete profiles with associated backends and policies (config-defined profiles are read-only)
 - List all API keys with usage metrics/quotas and active block statuses
 - Revoke and restore any API key
 - Filter and search API keys
