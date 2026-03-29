@@ -50,9 +50,12 @@ nav:
       - Audit: audit.md
       - Open WebUI Integration: open-webui.md
       - Admin Panel: admin.md
-  - Development & Testing: dev-test.md
-  - Schema Management: schema.md
-  - Helm Deployment: helm.md
+  - Development:
+      - Development Environment: development.md
+      - Testing: dev-test.md
+  - Deployment:
+      - Helm: helm.md
+      - Schema Management: schema.md
   - About: about.md
 
 markdown_extensions:
