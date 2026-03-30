@@ -125,7 +125,7 @@ oidc:
 ```
 
 !!! warning "TLS verification"
-Only set `skip_tls_verify: true` in development environments with self-signed certificates. Never disable in production.
+    Only set `skip_tls_verify: true` in development environments with self-signed certificates. Never disable in production.
 
 ---
 
@@ -169,16 +169,130 @@ opensearch:
 
 ---
 
-## `backend_profiles`
+## `openai_backends`
 
-A list of backend profile definitions. Each profile defines an upstream OpenAI-compliant endpoint with associated policies and quotas.
+A list of OpenAI-compliant backend definitions. Config-defined backends are automatically synced to the database on startup and are **read-only** in the admin portal. Additional backends can be created via the admin portal.
 
-!!! info "Not yet implemented"
-Backend profile configuration will be documented when the proxy layer is built.
+| Key               | Type    | Default | Description                                          |
+| ----------------- | ------- | ------- | ---------------------------------------------------- |
+| `name`            | string  | —       | Unique name for the backend                          |
+| `base_url`        | string  | —       | Base URL of the OpenAI-compliant API                 |
+| `api_key`         | string  | `""`    | API key for authenticating with the upstream backend |
+| `skip_tls_verify` | boolean | `false` | Skip TLS certificate verification                    |
 
 ```yaml
-backend_profiles: []
+openai_backends:
+  - name: "ollama-internal"
+    base_url: "https://ollama.example.com"
+    api_key: ""
+    skip_tls_verify: false
+  - name: "openai-production"
+    base_url: "https://api.openai.com/v1"
+    api_key: "sk-..."
+    skip_tls_verify: false
 ```
+
+!!! info "Config vs admin backends"
+    Config-defined backends appear with a **config** badge in the admin panel and cannot be edited or deleted through the UI. Admin-created backends can be freely modified.
+
+---
+
+## `policies`
+
+A list of policy definitions. Policies define terms of use that users must accept before creating API keys for backend profiles that reference them.
+
+Config-defined policies are automatically synced to the database on startup and are **read-only** in the admin portal. Additional policies can be created via the admin portal.
+
+| Key                      | Type    | Default | Description                                                      |
+| ------------------------ | ------- | ------- | ---------------------------------------------------------------- |
+| `name`                   | string  | —       | Unique name for the policy                                       |
+| `description`            | string  | `""`    | Internal description for admins                                  |
+| `content`                | string  | —       | The policy text displayed to users                               |
+
+```yaml
+policies:
+  - name: "acceptable-use"
+    description: "Standard acceptable use policy for internal services"
+    content: |
+      You must use this service responsibly and in accordance with
+      organisational guidelines. Do not share API keys with
+      unauthorised users. All usage is subject to audit logging.
+```
+
+!!! info "Config vs admin policies"
+    Config-defined policies always have **reacceptance enforcement disabled** — updating the content in `config.yaml` will create a new version but won't invalidate existing user acceptances. Admin-created policies can optionally enable reacceptance enforcement via the admin panel.
+
+### Versioning
+
+Every policy maintains an immutable version history. When policy content changes (either by editing in the admin panel or updating `config.yaml`), a new version is created automatically. Previous versions are retained for audit purposes.
+
+### Acceptance
+
+Users must accept all policies assigned to a backend profile before they can create API keys. Acceptance is scoped to a specific backend profile — accepting a policy for one profile does not satisfy it for another.
+
+### Reacceptance Enforcement
+
+Admin-created policies can enable **reacceptance enforcement**. When enabled, updating the policy content will:
+
+1. Invalidate all existing acceptances for that policy
+2. Prevent users from creating new API keys for affected profiles until they reaccept
+
+This does not affect existing API keys — only the creation of new ones.
+
+---
+
+## `backend_profiles`
+
+A list of backend profile definitions. Each profile groups one or more backends with access controls, policies, audit settings, and quotas.
+
+Config-defined profiles are automatically synced to the database on startup and are **read-only** in the admin portal. Additional profiles can be created via the admin portal.
+
+| Key                  | Type    | Default | Description                                                                    |
+| -------------------- | ------- | ------- | ------------------------------------------------------------------------------ |
+| `name`               | string  | —       | Unique name for the profile                                                    |
+| `description`        | string  | `""`    | Internal description for admins                                                |
+| `oidc_groups`        | list    | `[]`    | OIDC groups required for access (users must belong to at least one)            |
+| `backends`           | list    | `[]`    | List of backend names (must match `openai_backends` entries)                   |
+| `policy_names`       | list    | `[]`    | List of policy names (must match `policies` entries)                           |
+| `metadata_audit`     | boolean | `true`  | Enable audit logging of request metadata                                       |
+| `content_audit`      | boolean | `false` | Enable audit logging of full request/response content                          |
+| `default_expiry_days`| integer | _(none)_| Default API key expiry in days (null for no default)                           |
+| `enforce_expiry`     | boolean | `false` | Enforce the expiry — users cannot extend beyond the configured duration        |
+| `max_keys_per_user`  | integer | `5`     | Maximum number of active API keys per user                                     |
+| `open_webui_enabled` | boolean | `false` | Enable Open WebUI header support for this profile                              |
+
+```yaml
+backend_profiles:
+  - name: "internal-standard"
+    description: "Standard access to the internal Ollama instance"
+    oidc_groups:
+      - "gasket-users"
+    backends:
+      - "ollama-internal"
+    policy_names:
+      - "acceptable-use"
+    metadata_audit: true
+    content_audit: false
+    max_keys_per_user: 5
+  - name: "power-user"
+    description: "Extended access with content auditing"
+    oidc_groups:
+      - "gasket-power-users"
+    backends:
+      - "ollama-internal"
+      - "openai-production"
+    policy_names:
+      - "acceptable-use"
+    metadata_audit: true
+    content_audit: true
+    default_expiry_days: 90
+    enforce_expiry: true
+    max_keys_per_user: 10
+    open_webui_enabled: true
+```
+
+!!! info "Config vs admin profiles"
+    Config-defined profiles appear with a **config** badge in the admin panel and cannot be edited or deleted through the UI. Admin-created profiles can be freely modified. Both types reference backends and policies by name.
 
 ---
 
@@ -195,7 +309,7 @@ default_theme: "dark"
 
 banners:
   - type: info
-    content: "ℹ️ Welcome to the <b>Gasket Gateway</b> dev environment."
+    content: "ℹ️ Welcome to the <b>Gasket Gateway</b>."
     position: above_navbar
 
 oidc:
@@ -221,5 +335,29 @@ opensearch:
   url: "http://opensearch.example.com:9200"
   skip_tls_verify: false
 
-backend_profiles: []
+openai_backends:
+  - name: "ollama-internal"
+    base_url: "https://ollama.example.com"
+    api_key: ""
+    skip_tls_verify: false
+
+policies:
+  - name: "acceptable-use"
+    description: "Standard acceptable use policy"
+    content: |
+      You must use this service responsibly and in accordance
+      with organisational guidelines.
+
+backend_profiles:
+  - name: "internal-standard"
+    description: "Standard access to the internal Ollama instance"
+    oidc_groups:
+      - "gasket-users"
+    backends:
+      - "ollama-internal"
+    policy_names:
+      - "acceptable-use"
+    metadata_audit: true
+    content_audit: false
+    max_keys_per_user: 5
 ```

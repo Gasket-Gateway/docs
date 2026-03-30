@@ -4,6 +4,11 @@ Users create and manage Gasket API keys through the Portal UI. Each key is scope
 
 ## Creating an API Key
 
+Before creating a key, users must **accept all policies** assigned to the selected backend profile. The portal shows pending policies with a "Review & Accept" button — once all are accepted, key creation is enabled.
+
+!!! info "Policy gating"
+    If a policy with reacceptance enforcement is updated after the user has already accepted it, the user must reaccept the new version before they can create additional API keys for that profile. Existing keys are not affected.
+
 When creating a new key, users provide:
 
 | Field                  | Description                                                                                |
@@ -13,6 +18,8 @@ When creating a new key, users provide:
 | **Expiry date**        | Default or enforced from the backend profile config                                        |
 | **VSCode Continue**    | Opt-in to generate a Continue extension config snippet                                     |
 | **Open WebUI headers** | Opt-in to trust Open WebUI identity headers (only shown if enabled on the backend profile) |
+
+The accepted policy versions at the time of key creation are recorded against the API key for audit purposes.
 
 ## Viewing & Editing Keys
 
