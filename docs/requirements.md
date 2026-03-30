@@ -41,7 +41,7 @@ Full functional requirements for the Gasket Gateway.
 Backend profiles define how access to one or more OpenAI-compliant backends is governed:
 
 - Name and description
-- Policy text for users to accept before use
+- One or more assigned policies (see [Policies](#policies)) — users must accept all assigned policies before they can create API keys for the applicable backend profile
 - Whether metadata audit is enabled
 - Whether full request/response content audit is enabled
 - List of OpenAI backends
@@ -52,6 +52,41 @@ Backend profiles define how access to one or more OpenAI-compliant backends is g
 - Backend profiles are created and managed via the admin portal
 - Profiles can optionally be pre-defined in `config.yaml` — these are automatically populated into the database on startup and are **read-only** in the admin portal (cannot be edited or deleted via the UI)
 - Admin-created profiles (not from config) can be freely edited and deleted
+
+## Policies
+
+Policies define terms of use that users must accept before they can create API keys for a backend profile. Policies are assigned to backend profiles, and a backend profile can have one or more policies.
+
+### Policy Definitions
+
+- Policies have a name, description, and policy content (the text users must accept)
+- Policies can be created and managed via the admin portal, or pre-defined in `config.yaml`
+- Config-defined policies are automatically populated into the database on startup and are **read-only** in the admin portal (cannot be edited or deleted via the UI)
+- Admin-created policies (not from config) can be freely edited and deleted
+
+### Policy Versioning
+
+- Every policy has a version history stored in the database
+- Each version records the policy content and a timestamp of when the version was created
+- Any change to a policy (admin-edited or config-defined) creates a new version automatically
+- Previous versions are retained and can be looked up
+
+### Policy Acceptance
+
+- Users must accept all policies assigned to a backend profile before they can use it to create API keys
+- When a user accepts a policy, the acceptance record stores:
+  - The specific policy version that was accepted (this can then be used to record accepted policies against generated API keys)
+  - The backend profile the acceptance applies to
+  - The timestamp of acceptance
+- Acceptance is scoped to a backend profile — accepting a policy for one profile does not satisfy the same policy on another profile
+
+### Policy Change Enforcement
+
+- Admin-created policies have an option to **enforce reacceptance on change** — when this is enabled and the policy content is updated:
+  - All backend profiles with that policy assigned are **paused** for each user (existing API keys will function, new API keys cannot be created)
+  - Users must reaccept the updated policy before the backend profile is usable for them again (reenable API key generation)
+- Config-defined policies **do not support** the reacceptance enforcement option (it is always disabled)
+- When reacceptance is not enforced, policy updates do not interrupt access — a new version is still created for audit purposes, but existing acceptances remain valid
 
 ## OpenAI Backends
 
@@ -65,7 +100,8 @@ OpenAI backends represent individual upstream inference endpoints:
 ## User Portal
 
 - Users can view and accept policies for backend profiles they have access to
-- Users can view records of policies they have accepted (policy, acceptance timestamp)
+- Users can view records of policies they have accepted (policy name, policy version, backend profile, acceptance timestamp)
+- Users are prompted to reaccept policies when a new version is published and reacceptance is enforced
 - Users can see connection status, metrics, and quota usage for their available backends and backend profiles
 - User interactions with the portal create log events in the Flask app's stdout
 
@@ -80,6 +116,7 @@ See [API Key Management](api-keys.md) for the full user flow.
 - Expiry date (default or enforced from backend profile config)
 - Opt-in to VSCode Continue config template generation
 - Opt-in to Open WebUI header support (only shown if enabled on the selected backend profile)
+- The accepted policy versions for the selected backend profile at creation time are recorded against the API key
 
 **Key editing:**
 
@@ -88,6 +125,7 @@ See [API Key Management](api-keys.md) for the full user flow.
 - Edit Open WebUI header support opt-in
 - View usage metrics
 - View quota usage
+- View accepted policy versions
 
 **Key management:**
 
@@ -137,7 +175,9 @@ See [Admin Panel](admin.md) for full details.
 - Connection status for: PostgreSQL, OIDC provider, OpenSearch, all OpenAI backends
 - **OpenAI backend management:** add, edit, and delete backends (config-defined backends are read-only)
 - **Backend profile management:** create, edit, and delete profiles with associated backends and policies (config-defined profiles are read-only)
-- List all API keys with usage metrics/quotas and active block statuses
+- **Policy management:** create, edit, and delete policies; assign policies to backend profiles; configure reacceptance enforcement (config-defined policies are read-only)
+- View policy version history
+- List all API keys with usage metrics/quotas and active block statuses, accepted policies that apply to each key
 - Revoke and restore any API key
 - Filter and search API keys
 - Fetch and view audit records from OpenSearch
@@ -145,4 +185,4 @@ See [Admin Panel](admin.md) for full details.
 - Usage quotas dashboard including current block statuses
 - OpenAI backend dashboard showing connection status and usage metrics
 - Backend profile dashboard showing usage metrics and quotas
-- Policy acceptance records with search/filter by Gasket user
+- Policy acceptance records with search/filter by Gasket user, including accepted policy version details
