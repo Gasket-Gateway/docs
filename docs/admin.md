@@ -55,14 +55,16 @@ Below the policies table, admins can view all policy acceptance records:
 
 ## API Key Management
 
-- List all API keys across all users with:
-  - Usage metrics from Prometheus
-  - Quota usage from Prometheus
-  - Active block statuses from the database
-  - Accepted policy versions
-- **Revoke** any active API key
-- **Restore** any previously revoked API key
-- Filter and search keys by user, backend profile, status, or key name
+View and manage all API keys across all users:
+
+- **Table view** showing user email, key name, masked preview (`gsk_…xxxx`), profile, status, expiry, and creation date
+- **Filter** by user email (debounced search) and backend profile (dropdown)
+- **Revoke** any active API key — records which admin performed the revocation
+- **Restore** any revoked API key — disabled for expired keys (expired keys cannot be restored)
+- **View policy snapshots** — modal showing the exact policy versions accepted when the key was created
+
+!!! note "Key masking"
+    Admin routes never expose full API key values — only the masked preview is shown. Only the key owner can reveal the full value from the Portal.
 
 ## Audit Records
 

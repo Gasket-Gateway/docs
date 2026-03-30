@@ -76,21 +76,27 @@ When developing a new feature that requires schema changes:
 alembic revision -m "add_api_keys_table"
 ```
 
-This creates a new file in `migrations/versions/`. Edit it to add the schema change:
+This creates a new file in `migrations/versions/`. Edit it to define the schema change using Alembic operations:
 
 ```python
 def upgrade() -> None:
-    op.execute("""
-        CREATE TABLE api_keys (
-            id SERIAL PRIMARY KEY,
-            user_id TEXT NOT NULL,
-            key_hash TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT NOW()
-        )
-    """)
+    op.create_table(
+        "api_keys",
+        sa.Column("id", sa.Integer(), primary_key=True),
+        sa.Column("user_email", sa.Text(), nullable=False),
+        sa.Column("name", sa.Text(), nullable=False),
+        sa.Column("key_value", sa.Text(), nullable=False),
+        sa.Column("key_preview", sa.Text(), nullable=False),
+        sa.Column("profile_id", sa.Integer(),
+                  sa.ForeignKey("backend_profiles.id", ondelete="CASCADE"),
+                  nullable=False),
+        sa.Column("created_at", sa.DateTime(timezone=True),
+                  nullable=False, server_default=sa.func.now()),
+        sa.UniqueConstraint("key_value"),
+    )
 
 def downgrade() -> None:
-    op.execute("DROP TABLE api_keys")
+    op.drop_table("api_keys")
 ```
 
 ## Development Rules
