@@ -34,8 +34,15 @@ cd gasket/
 
 - `/health` endpoint returns 200
 - Portal page loads and displays test user
-- Admin panel is accessible
+- Dedicated `/keys` page loads
+- Admin `/admin` redirects to `/admin/status`
+- Admin sub-pages load: `/admin/status`, `/admin/backends`, `/admin/profiles`, `/admin/keys`, `/admin/policies`
+- Admin status page contains connection status
 - UI demo page loads
+- Backend CRUD, admin page, and status API
+- Profile CRUD, admin page, and config profile handling
+- Policy CRUD, versioning, acceptance, reacceptance, and config policy handling
+- API key create, read, reveal, edit, revoke, restore, lifecycle, admin management, and policy snapshots
 
 ### How Test Mode Works
 
@@ -140,7 +147,16 @@ App password tokens are used for ROPC token exchange (Authentik requires these i
 
 ### General Tests
 
-Add test files to `tests/`. They automatically get the test bypass session (user3/admin).
+Tests are organised into modules under `tests/`:
+
+| Directory          | Contents                                                  |
+|--------------------|-----------------------------------------------------------|
+| `tests/`           | Top-level tests (health, portal, backends, profiles, etc) |
+| `tests/api_keys/`  | API key tests (create, read, edit, revoke, admin, etc)    |
+| `tests/policies/`  | Policy tests (CRUD, acceptance, config policies)          |
+| `tests/oidc/`      | OIDC flow tests (separate runner, see below)              |
+
+All general tests automatically get the test bypass session (user3/admin).
 
 ```python
 # tests/test_example.py
@@ -151,7 +167,7 @@ class TestExample:
         assert response.status_code == 200
 ```
 
-The `client` fixture is provided by `tests/conftest.py`.
+The `client` fixture is provided by `tests/conftest.py`. Sub-directories like `tests/api_keys/` have their own `conftest.py` with additional fixtures (e.g. helper functions to create keys, accept policies).
 
 ### OIDC Tests
 

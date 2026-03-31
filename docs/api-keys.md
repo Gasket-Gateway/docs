@@ -1,6 +1,6 @@
 # API Key Management
 
-Users create and manage Gasket API keys through the Portal UI. Each key is scoped to a **backend profile** and carries optional feature opt-ins.
+Users create and manage Gasket API keys through the Portal UI at `/keys`. Each key is scoped to a **backend profile** and carries optional feature opt-ins.
 
 ## Key Format
 

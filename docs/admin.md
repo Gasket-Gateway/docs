@@ -1,8 +1,25 @@
 # Admin Panel
 
-The Gasket Admin Panel is accessible to users who belong to the configured admin OIDC group.
+The Gasket Admin Panel is accessible to users who belong to the configured admin OIDC group. The admin panel is organised into individual pages, each accessible from the admin sidebar navigation.
 
-## System Status
+Navigating to `/admin` redirects to the default page (`/admin/status`).
+
+## Pages
+
+| Route              | Page              | Status      |
+| ------------------ | ----------------- | ----------- |
+| `/admin/status`    | Connection Status | Available   |
+| `/admin/backends`  | OpenAI Backends   | Available   |
+| `/admin/profiles`  | Backend Profiles  | Available   |
+| `/admin/policies`  | Policies          | Available   |
+| `/admin/keys`      | API Keys          | Available   |
+| `/admin/audit`     | Audit Records     | Placeholder |
+| `/admin/usage`     | Usage Metrics     | Placeholder |
+| `/admin/quotas`    | Quotas            | Placeholder |
+
+---
+
+## Connection Status (`/admin/status`)
 
 Connection status indicators for all dependencies:
 
@@ -12,7 +29,9 @@ Connection status indicators for all dependencies:
 | OIDC Provider | Connected / Error |
 | OpenSearch    | Connected / Error |
 
-## OpenAI Backends
+---
+
+## OpenAI Backends (`/admin/backends`)
 
 Manage OpenAI-compliant inference backends:
 
@@ -23,7 +42,9 @@ Manage OpenAI-compliant inference backends:
 - **Test** backend connectivity from the admin panel
 - Config-defined backends appear with a **config** badge and are read-only
 
-## Backend Profiles
+---
+
+## Backend Profiles (`/admin/profiles`)
 
 Manage backend profiles that define access rules:
 
@@ -33,7 +54,9 @@ Manage backend profiles that define access rules:
 - **Delete** admin-created profiles
 - Config-defined profiles appear with a **config** badge and are read-only
 
-## Policies
+---
+
+## Policies (`/admin/policies`)
 
 Manage policies that gate API key creation:
 
@@ -53,7 +76,9 @@ Below the policies table, admins can view all policy acceptance records:
 - **Filter by user email** with debounced search
 - Shows the full acceptance audit trail across all users and profiles
 
-## API Key Management
+---
+
+## API Keys (`/admin/keys`)
 
 View and manage all API keys across all users:
 
@@ -66,7 +91,12 @@ View and manage all API keys across all users:
 !!! note "Key masking"
     Admin routes never expose full API key values — only the masked preview is shown. Only the key owner can reveal the full value from the Portal.
 
-## Audit Records
+---
+
+## Audit Records (`/admin/audit`)
+
+!!! info "Coming soon"
+    This page is a placeholder for upcoming audit record search and viewing functionality.
 
 Search and view audit records from OpenSearch:
 
@@ -76,20 +106,20 @@ Search and view audit records from OpenSearch:
 - **Conversation threads** — aggregate related requests into conversation views
 - **Histograms** — request/response count and token usage over time
 
-## Dashboards
+---
 
-### Usage Metrics
+## Usage Metrics (`/admin/usage`)
+
+!!! info "Coming soon"
+    This page is a placeholder for upcoming usage metrics dashboard functionality.
 
 Prometheus-backed dashboard showing aggregate token usage, latency, and success/failure rates.
 
-### Usage Quotas
+---
+
+## Quotas (`/admin/quotas`)
+
+!!! info "Coming soon"
+    This page is a placeholder for upcoming quota management functionality.
 
 Current quota consumption and active block statuses from Prometheus and the database.
-
-### OpenAI Backends
-
-Connection status and per-backend usage metrics for all configured OpenAI backends.
-
-### Backend Profiles
-
-Usage metrics and quota status broken down by backend profile.
