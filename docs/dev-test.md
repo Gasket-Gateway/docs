@@ -90,6 +90,8 @@ cd gasket/
 
 ### What's Tested
 
+#### Login Flow (`test_oidc_login.py`)
+
 | Test | Description |
 |---|---|
 | ROPC token exchange | user2 and user3 receive valid tokens via app passwords |
@@ -99,6 +101,51 @@ cd gasket/
 | Browser login (user2) | Selenium login through Authentik UI + portal access |
 | Admin access (user3) | Admin panel accessible after Selenium login |
 | Health smoke test | `/health` returns 200 |
+
+#### Access Control (`test_oidc_access.py`)
+
+| Test | Description |
+|---|---|
+| Unauthenticated redirects | All protected pages/APIs redirect to login without a session |
+| user2 portal access | Portal page, keys page, and user API keys accessible |
+| user2 admin denied | All admin pages and admin API endpoints return 403 |
+| user2 admin write denied | Create backend/profile/policy via admin API returns 403 |
+| user3 portal access | Portal and keys pages accessible |
+| user3 admin access | All admin pages and admin API endpoints return 200 |
+| Policy acceptance access | user2 sees own acceptances; admin list denied; user3 sees all |
+
+#### Profiles & Policies (`test_oidc_profiles.py`)
+
+| Test | Description |
+|---|---|
+| Config profile exists | `internal-standard` profile exists with correct structure |
+| Profile OIDC groups | Profile has `gasket-users` in `oidc_groups` (returned as list) |
+| Profile backends/policies | Profile references `ollama-internal` and `acceptable-use` |
+| Admin write access | user2 denied CRUD on profiles; user3 can read single profile |
+| Config read-only | Config-sourced profiles cannot be modified or deleted by admin |
+| Policy visibility | Config policy exists with content and version |
+| Policy acceptance flow | user2 can check, accept, and verify policy acceptance status |
+| Admin acceptance view | user3 can view user2's acceptances via admin endpoint |
+| User API key create | Key creation gated by policy acceptance; revealed key has `gsk_` prefix |
+| Key visibility | Created keys appear in user's list and admin's list |
+| Key revocation | user2 can revoke own key; admin can revoke user2's key |
+| Cross-user isolation | user2 cannot reveal or revoke user3's keys (404) |
+| Backend admin access | user2 denied backend CRUD; user3 can list and read |
+
+#### Portal (`test_oidc_portal.py`)
+
+| Test | Description |
+|---|---|
+| User profiles API | user2 and user3 can list profiles via `/api/profiles` (group-filtered) |
+| Profile visibility | user2 sees `internal-standard` profile (scoped to `gasket-users`) |
+| Profile fields | User-facing profiles include all fields needed by the portal UI |
+| Profile groups/backends/policies | Profile correctly references `gasket-users`, `ollama-internal`, `acceptable-use` |
+| User policy API | user2 and user3 can read policy details via `/api/policies/<id>` |
+| Policy content | Policy has name, content, and version for user review |
+| Unauthenticated denied | Profile and policy endpoints redirect unauthenticated users to login |
+| Portal renders profiles | Browser-level: user2's portal page renders profile cards (not empty) |
+| Portal shows profile name | Browser-level: `internal-standard` appears in the rendered portal page |
+| Admin link visibility | Browser-level: user3 sees Admin link in navbar; user2 does not |
 
 ---
 
@@ -175,12 +222,24 @@ Add test files to `tests/oidc/`. These run against a live environment.
 
 ```python
 # tests/oidc/test_example.py
-from .conftest import fetch_ropc_token, GASKET_URL
+from .conftest import GASKET_URL
 
 class TestExample:
-    def test_something(self, browser, gasket_url):
+    def test_browser_check(self, browser, gasket_url):
         browser.get(f"{gasket_url}/some-page")
         assert "expected" in browser.page_source
+
+    def test_api_as_user2(self, user2_session, gasket_url):
+        resp = user2_session.get(f"{gasket_url}/api/keys")
+        assert resp.status_code == 200
+
+    def test_api_as_admin(self, user3_session, gasket_url):
+        resp = user3_session.get(f"{gasket_url}/admin/api/profiles")
+        assert resp.status_code == 200
+
+    def test_unauthenticated(self, anon_session, gasket_url):
+        resp = anon_session.get(f"{gasket_url}/admin", allow_redirects=True)
+        assert "login" in resp.url.lower()
 ```
 
 Available fixtures from `tests/oidc/conftest.py`:
@@ -189,3 +248,8 @@ Available fixtures from `tests/oidc/conftest.py`:
 - `browser` — headless Chromium WebDriver
 - `user2_token` — ROPC tokens for user2
 - `user3_token` — ROPC tokens for user3
+- `user2_session` — `requests.Session` authenticated as user2 (session scope)
+- `user3_session` — `requests.Session` authenticated as user3 (session scope)
+- `anon_session` — unauthenticated `requests.Session`
+
+The session-based fixtures log in via Selenium once per test run and extract the Flask session cookies for use in `requests.Session`. This allows API-level access testing without needing the browser for every request.
