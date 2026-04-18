@@ -8,8 +8,10 @@ Full functional requirements for the Gasket Gateway.
 - Supports multiple concurrent instances (high availability) sharing the same PostgreSQL and OpenSearch, with OIDC session state persisted across instances
 - UI built with plain HTML, CSS, and JavaScript — no external UI libraries or JavaScript frameworks
 - `:5000/health` endpoint returning 200 OK
-- `:9050/health` endpoint returning 200 OK
+- `:5000/v1/*` proxy endpoint accepting API key authenticated requests and forwarding them to OpenAI-compliant backends (see [API Proxy](#api-proxy))
+- `:9050/health` endpoint returning 200 OK (confirms the metrics server is running)
 - `:9050/metrics` endpoint returning Prometheus metrics, aggregated across all instances via PostgreSQL (uses different port `9050` to isolate from main traffic)
+- Custom error pages for HTTP errors (403, 404, 500, etc.) — no stack traces or internal details exposed to users
 
 ## Database & Schema Management
 
@@ -130,6 +132,8 @@ See [API Key Management](api-keys.md) for the full user flow.
 **Key management:**
 
 - User can revoke their own API keys
+- Admin can revoke any API key — records which admin performed the revocation
+- Admin can restore revoked API keys (expired keys cannot be restored)
 - Template VSCode Continue config for all opted-in API keys
 
 ## Monitoring & Quotas
@@ -186,3 +190,13 @@ See [Admin Panel](admin.md) for full details.
 - OpenAI backend dashboard showing connection status and usage metrics
 - Backend profile dashboard showing usage metrics and quotas
 - Policy acceptance records with search/filter by Gasket user, including accepted policy version details
+
+## API Proxy
+
+- The proxy listens on `:5000/v1/*`, matching the OpenAI API path convention
+- Incoming requests must include an `Authorization: Bearer gsk_*` header containing a valid Gasket API key
+- The proxy validates the API key (active, not revoked, not expired), resolves the user, backend profile, and upstream backend(s)
+- Requests are forwarded to the upstream backend(s) with the upstream backend's own API key
+- Streaming responses (`stream: true`) are proxied as Server-Sent Events back to the client
+- Upstream errors (timeouts, 5xx, connection failures) are returned as OpenAI-compatible error JSON responses
+- Token counts from upstream responses are extracted for audit, metrics, and quota evaluation

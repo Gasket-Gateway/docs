@@ -1,0 +1,197 @@
+# Roadmap
+
+Outstanding features and tasks derived from comparing the [requirements](requirements.md) against the current codebase. Items are grouped by category.
+
+---
+
+## API Proxy / Gateway Engine
+
+The core proxy that sits between API clients and OpenAI-compliant backends. This is the central feature that all monitoring, audit, and quota systems depend on.
+
+- **API key authentication middleware** — Accept incoming requests on `/v1/*` bearing a `gsk_*` API key (via `Authorization: Bearer` header). Validate the key against the database, check it is active (not revoked, not expired), and resolve the associated user, backend profile, and backends.
+- **Request proxying to OpenAI backends** — Forward authenticated requests from `/v1/*` to the upstream backend(s) defined on the resolved backend profile. The proxy path matches the OpenAI API convention (e.g. `/v1/chat/completions`, `/v1/completions`, `/v1/models`). Pass through the upstream backend's API key.
+- **Streaming response proxying (SSE)** — Transparently proxy `stream: true` responses as Server-Sent Events back to the client. Aggregate streamed chunks internally for audit and token counting.
+- **Multi-backend routing** — When a backend profile has multiple backends assigned, determine routing strategy (e.g. round-robin, primary/fallback, or model-based routing).
+- **Error handling and upstream error passthrough** — Gracefully handle upstream errors (timeouts, 5xx, connection failures) and return appropriate OpenAI-compatible error responses to the client.
+
+---
+
+## Audit — OpenSearch Integration
+
+Audit record writing to OpenSearch is defined in the requirements but not yet implemented beyond the health check.
+
+- **Write metadata audit records** — On every proxied request, write an audit record to OpenSearch containing: user, api_key, model, backend, timestamps, and token counts. Controlled by the `metadata_audit` flag on the backend profile.
+- **Write full content audit records** — When `content_audit` is enabled on a backend profile, store the complete request body and complete response body (including assembled streaming content) in the audit record.
+- **Streaming request aggregation** — Aggregate individual SSE chunks from streaming responses into a single consolidated audit record per request.
+- **Open WebUI identity in audit** — When Open WebUI header support is active and headers are present, include the Open WebUI user identity in audit records alongside the Gasket user identity.
+- **OpenSearch index management** — Define the OpenSearch index mapping/template for audit records. Handle index creation, naming conventions (e.g. daily indices), and lifecycle.
+
+---
+
+## Admin Panel — Audit Records Page
+
+Currently a placeholder page at `/admin/audit`. Depends on audit writing being in place.
+
+- **Search and filter interface** — Build the UI for querying OpenSearch audit records by user, API key, model, backend, and time range. Route exists but renders a placeholder.
+- **Metadata view** — Display audit record metadata (user, timestamps, token counts, backend) in a browsable table/list.
+- **Full content view** — Expandable view showing full request/response content for audit records where content audit was enabled.
+- **Conversation thread aggregation** — Group related audit records into conversation threads (e.g. by session or request chain).
+- **Histograms** — Show request/response count and token usage over time using charts or visual indicators.
+
+---
+
+## Prometheus Metrics
+
+The metrics server exists but only returns a static stub. No real metrics are being collected or exposed.
+
+- **Instrument proxy with Prometheus counters/histograms** — Integrate `prometheus_client` to record: token usage, API call latency, API call success/failure. All metrics must carry labels: `user`, `api_key`, `backend_profile`, `openai_backend`, `model`.
+- **Daily active unique user gauges** — Track and expose: daily active unique API users (Gasket), daily active unique API users (Open WebUI), daily active unique API users (combined), and daily active unique Portal users.
+- **Metrics aggregation across HA instances** — Aggregate metrics data across all running instances via PostgreSQL so that scraping any single instance returns cluster-wide metrics. The current `/metrics` endpoint returns a static stub.
+- **Open WebUI identity in metrics labels** — When Open WebUI header support is active, include Open WebUI user identity in Prometheus metric labels.
+
+---
+
+## Admin Panel — Usage Metrics Page
+
+Currently a placeholder page at `/admin/usage`. Depends on Prometheus metrics being functional.
+
+- **Usage metrics dashboard UI** — Build the admin dashboard showing aggregate token usage, latency, and success/failure rates. Route exists but renders a placeholder.
+- **Backend-level metrics view** — OpenAI backend dashboard showing per-backend connection status and usage metrics.
+- **Profile-level metrics view** — Backend profile dashboard showing per-profile usage metrics.
+
+---
+
+## Quotas — Enforcement Engine
+
+Quota configuration fields exist on the backend profile model conceptually but quota enforcement logic is not implemented.
+
+- **Quota configuration on backend profiles** — Add quota configuration fields to backend profiles: maximum tokens, rolling time period, and quota scope. Currently the model has no quota config columns. Requires Alembic migration.
+- **Quota block status table** — Create a database table to store active block statuses with expiry timestamps (user/key/scope/expiry). Requires Alembic migration.
+- **Pre-request block check** — On every incoming proxied request, check the database for active block status before forwarding to the backend. Return HTTP 429 if blocked.
+- **Post-request background quota evaluation** — After a successful proxied request, trigger a background task to evaluate token consumption against configured quotas. If exceeded, write a block status with expiry to the database.
+- **Quota scope enforcement** — Implement all five quota scopes: per API key, per Gasket user per profile, per Open WebUI user per profile, per Gasket user globally, per Open WebUI user globally.
+- **Admin quota configuration UI** — Add quota configuration fields to the backend profile create/edit forms in the admin panel.
+
+---
+
+## Admin Panel — Quotas Page
+
+Currently a placeholder page at `/admin/quotas`. Depends on the quota engine being in place.
+
+- **Quotas dashboard UI** — Build the admin dashboard showing current quota consumption and active block statuses. Route exists but renders a placeholder.
+- **Block status management** — Allow admins to view, and potentially clear, active quota blocks.
+
+---
+
+## User Portal Enhancements
+
+Several portal features defined in requirements are not yet present.
+
+- **View accepted policy records** — Users should be able to view a list of policies they have accepted, showing: policy name, policy version, backend profile, and acceptance timestamp. The API endpoint exists (`/admin/api/policies/my-acceptances`) but is under the admin blueprint — no portal UI renders this.
+- **Policy reacceptance prompts** — When a policy with reacceptance enforcement has been updated, prompt the user to reaccept before they can create new API keys. The backend logic for checking exists but the portal UI doesn't surface reacceptance prompts.
+- **Connection status / backend health** — Portal users should be able to see connection status for their available backends. Currently only available in the admin panel.
+- **Usage metrics for user's backends** — Users should be able to see their own usage metrics for available backends and backend profiles. Depends on Prometheus metrics.
+- **Quota usage for user's keys** — Users should be able to see their own quota consumption. Depends on quota engine.
+- **Per-key usage metrics** — Show usage metrics when viewing/editing an individual API key in the portal. Depends on Prometheus metrics.
+- **Per-key quota usage** — Show quota usage when viewing/editing an individual API key in the portal. Depends on quota engine.
+- **Per-key accepted policy versions** — Show the accepted policy version snapshots in the portal key detail view. The API exists (`/api/keys/<id>/policies`) but the portal UI doesn't render them in the key detail modal.
+
+---
+
+## VSCode Continue Integration
+
+The opt-in flag is stored on the API key and can be toggled, but the config snippet generation is not implemented.
+
+- **Generate Continue config snippet** — For API keys with `vscode_continue` enabled, generate a ready-to-use VSCode Continue extension config JSON snippet pointing at the Gasket gateway endpoint with the API key pre-filled.
+- **Display snippet in portal key detail** — Show the generated Continue config snippet in the portal key detail view with copy-to-clipboard support.
+- **Template all opted-in keys** — Provide a way to generate/download a combined Continue config covering all of a user's opted-in API keys.
+
+---
+
+## Open WebUI Header Support
+
+The opt-in flags exist on backend profiles and API keys, but the actual header processing logic is not implemented.
+
+- **Read and validate Open WebUI identity headers** — When both the backend profile and API key have Open WebUI support enabled, extract the Open WebUI user identity from incoming request headers.
+- **Fall back to Gasket user identity** — When Open WebUI headers are absent on an opted-in key, fall back to the Gasket user identity for audit, metrics, and quotas.
+- **Open WebUI identity in audit/metrics/quotas** — Use the extracted Open WebUI identity for audit record attribution, Prometheus metric labels, and quota evaluation. Depends on audit, metrics, and quota sections.
+
+---
+
+## Admin Panel — Key Management Enhancements
+
+Most admin key management is implemented. A few items from requirements are outstanding.
+
+- **Per-key usage metrics in admin view** — Show usage metrics alongside each API key in the admin keys table. Depends on Prometheus metrics.
+- **Per-key quota usage in admin view** — Show quota consumption and active block status alongside each API key. Depends on quota engine.
+- **Accepted policies display in admin keys table** — Show the accepted policy versions that apply to each key directly in the admin key table/list (currently only available via a separate API call and modal).
+
+---
+
+## Admin Panel — Backend & Profile Dashboards
+
+- **OpenAI backend usage dashboard** — Backend-level view showing connection status alongside per-backend usage metrics. Currently backends page shows CRUD and connectivity but no usage data. Depends on Prometheus metrics.
+- **Backend profile usage dashboard** — Profile-level view showing per-profile usage metrics and quota consumption. Currently profiles page shows CRUD but no usage data. Depends on metrics and quotas.
+
+---
+
+## Rate Limiting
+
+_# no current tasks_
+
+---
+
+## Notifications & Alerts
+
+_# no current tasks_
+
+---
+
+## User Management
+
+_# no current tasks_
+
+---
+
+## API (Non-Proxy)
+
+_# no current tasks_
+
+---
+
+## Deployment & Infrastructure
+
+_# no current tasks_
+
+---
+
+## Security Hardening
+
+_# no current tasks_
+
+---
+
+## Documentation
+
+- **Fix `api-keys.md` Continue snippet description** — The doc describes the VSCode Continue config snippet as if it's already implemented ("visible on the key detail page"). It should be marked as planned/coming soon until the feature is built.
+- **Fix `architecture.md` endpoints table** — The endpoints table only lists `/`, `/health`, and `/metrics`. It's missing `/admin/*`, `/keys`, `/api/*`, `/admin/api/*`, `/auth/*`. Also clarify that `/metrics` runs on port 9050, not 5000.
+- **Fix `architecture.md` metrics port description** — The doc implies `/metrics` is served alongside `/` on the same port, but it actually runs on a separate port (9050) via `metrics_server.py`.
+
+---
+
+## Codebase Cleanup
+
+- **Delete old monolithic templates** — `gasket/app/templates/portal.html` (35KB) and `gasket/app/templates/admin.html` (88KB) are no longer referenced by any route. They are leftovers from the template refactoring in 0.1.5 and should be deleted.
+- **Delete old monolithic test files** — `gasket/tests/test_api_keys.py` (47KB) and `gasket/tests/test_policies.py` (25KB) exist alongside the modular `tests/api_keys/` and `tests/policies/` directories. If the modular versions are the active ones, these old files should be deleted.
+- **Evaluate UI demo page** — `gasket/app/routes/ui_demo.py` and `gasket/app/templates/ui_demo.html` (39KB) provide a `/ui-demo` page that is not documented anywhere. Decide whether to keep it as a development tool (and document it) or remove it from production builds.
+
+---
+
+## Testing & Quality
+
+- **Proxy / gateway integration tests** — End-to-end tests for the API proxy flow: key auth → routing → upstream call → response. Depends on proxy engine.
+- **Audit record tests** — Verify audit records are correctly written to OpenSearch for metadata-only and full-content scenarios. Depends on audit integration.
+- **Metrics endpoint tests** — Verify Prometheus metrics are correctly exposed with the expected labels and values. Depends on Prometheus metrics.
+- **Quota enforcement tests** — Verify quota block/unblock lifecycle, all quota scopes, and 429 responses. Depends on quota engine.
+- **Open WebUI header tests** — Verify header extraction, fallback behaviour, and identity propagation to audit/metrics/quotas. Depends on Open WebUI header support.
+- **VSCode Continue snippet tests** — Verify correct snippet generation for opted-in keys. Depends on Continue integration.
