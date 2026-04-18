@@ -11,7 +11,7 @@ The core proxy that sits between API clients and OpenAI-compliant backends. This
 - **API key authentication middleware** — Accept incoming requests on `/v1/*` bearing a `gsk_*` API key (via `Authorization: Bearer` header). Validate the key against the database, check it is active (not revoked, not expired), and resolve the associated user, backend profile, and backends.
 - **Request proxying to OpenAI backends** — Forward authenticated requests from `/v1/*` to the upstream backend(s) defined on the resolved backend profile. The proxy path matches the OpenAI API convention (e.g. `/v1/chat/completions`, `/v1/completions`, `/v1/models`). Pass through the upstream backend's API key.
 - **Streaming response proxying (SSE)** — Transparently proxy `stream: true` responses as Server-Sent Events back to the client. Aggregate streamed chunks internally for audit and token counting.
-- **Multi-backend routing** — When a backend profile has multiple backends assigned, determine routing strategy (e.g. round-robin, primary/fallback, or model-based routing).
+- **Multi-backend routing** — When a backend profile has multiple backends assigned, implement a routing strategy. *Note: Needs further research on how to implement sticky sessions based on chat session IDs to leverage upstream context caching.*
 - **Error handling and upstream error passthrough** — Gracefully handle upstream errors (timeouts, 5xx, connection failures) and return appropriate OpenAI-compatible error responses to the client.
 
 ---
@@ -46,7 +46,7 @@ The metrics server exists but only returns a static stub. No real metrics are be
 
 - **Instrument proxy with Prometheus counters/histograms** — Integrate `prometheus_client` to record: token usage, API call latency, API call success/failure. All metrics must carry labels: `user`, `api_key`, `backend_profile`, `openai_backend`, `model`.
 - **Daily active unique user gauges** — Track and expose: daily active unique API users (Gasket), daily active unique API users (Open WebUI), daily active unique API users (combined), and daily active unique Portal users.
-- **Metrics aggregation across HA instances** — Aggregate metrics data across all running instances via PostgreSQL so that scraping any single instance returns cluster-wide metrics. The current `/metrics` endpoint returns a static stub.
+- **Metrics aggregation across HA instances** — Implement eventual/background writes of instance stats to PostgreSQL, and have the `/metrics` endpoint read and aggregate cluster-wide metrics from the DB. The current `/metrics` endpoint returns a static stub.
 - **Open WebUI identity in metrics labels** — When Open WebUI header support is active, include Open WebUI user identity in Prometheus metric labels.
 
 ---
@@ -65,7 +65,7 @@ Currently a placeholder page at `/admin/usage`. Depends on Prometheus metrics be
 
 Quota configuration fields exist on the backend profile model conceptually but quota enforcement logic is not implemented.
 
-- **Quota configuration on backend profiles** — Add quota configuration fields to backend profiles: maximum tokens, rolling time period, and quota scope. Currently the model has no quota config columns. Requires Alembic migration.
+- **Quota configuration on backend profiles** — Add quota configuration fields to backend profiles: maximum tokens (`X`) and rolling time period in hours (`Y`). Currently the model has no quota config columns. Requires Alembic migration.
 - **Quota block status table** — Create a database table to store active block statuses with expiry timestamps (user/key/scope/expiry). Requires Alembic migration.
 - **Pre-request block check** — On every incoming proxied request, check the database for active block status before forwarding to the backend. Return HTTP 429 if blocked.
 - **Post-request background quota evaluation** — After a successful proxied request, trigger a background task to evaluate token consumption against configured quotas. If exceeded, write a block status with expiry to the database.
@@ -183,7 +183,7 @@ _# no current tasks_
 
 - **Delete old monolithic templates** — `gasket/app/templates/portal.html` (35KB) and `gasket/app/templates/admin.html` (88KB) are no longer referenced by any route. They are leftovers from the template refactoring in 0.1.5 and should be deleted.
 - **Delete old monolithic test files** — `gasket/tests/test_api_keys.py` (47KB) and `gasket/tests/test_policies.py` (25KB) exist alongside the modular `tests/api_keys/` and `tests/policies/` directories. If the modular versions are the active ones, these old files should be deleted.
-- **Evaluate UI demo page** — `gasket/app/routes/ui_demo.py` and `gasket/app/templates/ui_demo.html` (39KB) provide a `/ui-demo` page that is not documented anywhere. Decide whether to keep it as a development tool (and document it) or remove it from production builds.
+
 
 ---
 

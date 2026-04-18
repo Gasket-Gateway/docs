@@ -10,8 +10,9 @@ Full functional requirements for the Gasket Gateway.
 - `:5000/health` endpoint returning 200 OK
 - `:5000/v1/*` proxy endpoint accepting API key authenticated requests and forwarding them to OpenAI-compliant backends (see [API Proxy](#api-proxy))
 - `:9050/health` endpoint returning 200 OK (confirms the metrics server is running)
-- `:9050/metrics` endpoint returning Prometheus metrics, aggregated across all instances via PostgreSQL (uses different port `9050` to isolate from main traffic)
+- `:9050/metrics` endpoint returning Prometheus metrics. Instances eventually write stats to PostgreSQL, and the endpoint aggregates data via DB read query across all instances (uses different port `9050` to isolate from main traffic)
 - Custom error pages for HTTP errors (403, 404, 500, etc.) — no stack traces or internal details exposed to users
+- The `/ui-demo` route must only be accessible when the application is running in test mode (e.g. debug mode); otherwise it should be disabled or return a 404
 
 ## Database & Schema Management
 
@@ -48,7 +49,7 @@ Backend profiles define how access to one or more OpenAI-compliant backends is g
 - Whether full request/response content audit is enabled
 - List of OpenAI backends
 - Default or enforced API key expiry duration
-- Usage quota configurations (see [Monitoring & Quotas](quotas.md))
+- Usage quota configurations (configurable X tokens per Y hour block, see [Monitoring & Quotas](quotas.md))
 - Maximum number of active API keys per user
 - Whether Open WebUI header support is enabled (see [Open WebUI Integration](open-webui.md))
 - Backend profiles are created and managed via the admin portal
@@ -196,6 +197,7 @@ See [Admin Panel](admin.md) for full details.
 - The proxy listens on `:5000/v1/*`, matching the OpenAI API path convention
 - Incoming requests must include an `Authorization: Bearer gsk_*` header containing a valid Gasket API key
 - The proxy validates the API key (active, not revoked, not expired), resolves the user, backend profile, and upstream backend(s)
+- When multiple backends are available, routing should implement sticky sessions based on chat session to preserve upstream cache context (needs further research)
 - Requests are forwarded to the upstream backend(s) with the upstream backend's own API key
 - Streaming responses (`stream: true`) are proxied as Server-Sent Events back to the client
 - Upstream errors (timeouts, 5xx, connection failures) are returned as OpenAI-compatible error JSON responses
