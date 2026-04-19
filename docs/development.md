@@ -189,6 +189,8 @@ cd gasket/
 - Profile CRUD, admin page, and config profile handling
 - Policy CRUD, versioning, acceptance, reacceptance, and config policy handling
 - API key create, read, reveal, edit, revoke, restore, lifecycle, admin management, and policy snapshots
+- API Proxy auth, forward routing, and upstream error handling
+- RBAC multi-role access controls
 
 ### How Test Mode Works
 
@@ -344,9 +346,10 @@ Tests are organised into modules under `tests/`:
 
 | Directory          | Contents                                                  |
 |--------------------|-----------------------------------------------------------|
-| `tests/`           | Top-level tests (health, portal, backends, profiles, etc) |
+| `tests/`           | Top-level tests (health, portal, backends, proxy, etc)    |
 | `tests/api_keys/`  | API key tests (create, read, edit, revoke, admin, etc)    |
 | `tests/policies/`  | Policy tests (CRUD, acceptance, config policies)          |
+| `tests/rbac/`      | RBAC access control tests (multi-role testing)            |
 | `tests/oidc/`      | OIDC flow tests (separate runner, see below)              |
 
 All general tests automatically get the test bypass session (user3/admin).
