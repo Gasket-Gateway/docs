@@ -148,7 +148,7 @@ Most admin key management is implemented. A few items from requirements are outs
 
 ## Rate Limiting
 
-_# no current tasks_
+- **Default rate limiting** — Implement a default rate limit for all application endpoints to protect against basic volumetric denial-of-service (DoS) attacks and brute-forcing.
 
 ---
 
@@ -189,7 +189,10 @@ _# no current tasks_
 
 ## Security Hardening
 
-_# no current tasks_
+- **Encrypt API Keys at Rest** — Introduce symmetric encryption (e.g., `cryptography.fernet`) for Gasket `ApiKey` values and `OpenAIBackend.api_key` values in the database. Require an encryption key via environment variable or config, and update CRUD operations to encrypt/decrypt on the fly. This allows users to still view their API keys securely.
+- **Proxy Error Sanitization** — Update `proxy_engine.make_upstream_error` to catch specific exceptions and return generic failure messages to the client, preventing internal URL/IP leakage. Ensure the raw exception is strictly logged internally.
+- **Sanitize Client IP Headers** — Explicitly strip or sanitize client IP headers (`X-Forwarded-For`, `X-Real-IP`) in the proxy engine to prevent origin spoofing.
+- **Test Mode Safeguards** — Add a loud warning banner to the UI when `GASKET_TEST_MODE` is active, and require a secondary assertion (e.g., `FLASK_ENV=development`) before test mode will engage, to prevent accidental production deployments.
 
 ---
 
