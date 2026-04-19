@@ -8,10 +8,7 @@ Outstanding features and tasks derived from comparing the [requirements](require
 
 The core proxy that sits between API clients and OpenAI-compliant backends. This is the central feature that all monitoring, audit, and quota systems depend on.
 
-- **Request proxying to OpenAI backends** — Forward authenticated requests from `/v1/*` to the upstream backend(s) defined on the resolved backend profile. The proxy path matches the OpenAI API convention (e.g. `/v1/chat/completions`, `/v1/completions`, `/v1/models`). Pass through the upstream backend's API key.
-- **Streaming response proxying (SSE)** — Transparently proxy `stream: true` responses as Server-Sent Events back to the client. Aggregate streamed chunks internally for audit and token counting.
 - **Multi-backend routing** — When a backend profile has multiple backends assigned, implement a routing strategy. *Interim solution: Use client IP-based sticky sessions. This requires ensuring the true client IP header (e.g., X-Forwarded-For) is correctly passed through Traefik or the deployment's ingress gateway.*
-- **Error handling and upstream error passthrough** — Gracefully handle upstream errors (timeouts, 5xx, connection failures) and return appropriate OpenAI-compatible error responses to the client.
 
 ---
 
