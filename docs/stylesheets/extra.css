@@ -1,25 +1,9 @@
 /*
  * Gasket Gateway — MkDocs Material Overrides
  *
- * Keeps Courier New monospaced font and the Gasket blue colour scheme.
+ * Keeps the Gasket blue colour scheme and the logo tweaks.
  * Everything else defers to the stock Material theme.
  */
-
-/* ═══════════════════════════════════════════════════════════════════
-   FONTS — Courier New monospace everywhere
-   ═══════════════════════════════════════════════════════════════════ */
-:root {
-  --md-text-font: "Courier New", Courier, monospace;
-  --md-code-font: "Courier New", Courier, monospace;
-}
-
-body, input, button, select, textarea {
-  font-family: "Courier New", Courier, monospace !important;
-}
-
-.md-typeset code {
-  font-family: "Courier New", Courier, monospace !important;
-}
 
 /* ═══════════════════════════════════════════════════════════════════
    PALETTE — Light mode
