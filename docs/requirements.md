@@ -51,6 +51,7 @@ Backend profiles define how access to one or more OpenAI-compliant backends is g
 - Default or enforced API key expiry duration
 - Usage quota configurations (configurable X tokens per Y hour block, see [Monitoring & Quotas](portal-and-gateway.md#monitoring-quotas))
 - Maximum number of active API keys per user
+- Optional list of allowed models — when set, only the specified model names may be used through this profile. The proxy will reject requests specifying a disallowed model and filter `/v1/models` responses to show only allowed models. An empty list means all models on the upstream backend(s) are permitted.
 - Whether Open WebUI header support is enabled (see [Open WebUI Integration](portal-and-gateway.md#open-webui-integration))
 - Backend profiles are created and managed via the admin portal
 - Profiles can optionally be pre-defined in `config.yaml` — these are automatically populated into the database on startup and are **read-only** in the admin portal (cannot be edited or deleted via the UI)
@@ -202,3 +203,6 @@ See [Admin Panel](portal-and-gateway.md#admin-panel) for full details.
 - Streaming responses (`stream: true`) are proxied as Server-Sent Events back to the client
 - Upstream errors (timeouts, 5xx, connection failures) are returned as OpenAI-compatible error JSON responses
 - Token counts from upstream responses are extracted for audit, metrics, and quota evaluation
+- When a backend profile has an allowed models list configured, the proxy must enforce it:
+  - `/v1/models` responses are filtered to include only allowed models
+  - Requests to `/v1/chat/completions`, `/v1/completions`, and other model-bearing endpoints are rejected with a 403 if the requested model is not in the allowed list

@@ -8,11 +8,25 @@ Outstanding features and tasks derived from comparing the [requirements](require
 
 The core proxy that sits between API clients and OpenAI-compliant backends. This is the central feature that all monitoring, audit, and quota systems depend on.
 
-- **API key authentication middleware** — Accept incoming requests on `/v1/*` bearing a `gsk_*` API key (via `Authorization: Bearer` header). Validate the key against the database, check it is active (not revoked, not expired), and resolve the associated user, backend profile, and backends.
 - **Request proxying to OpenAI backends** — Forward authenticated requests from `/v1/*` to the upstream backend(s) defined on the resolved backend profile. The proxy path matches the OpenAI API convention (e.g. `/v1/chat/completions`, `/v1/completions`, `/v1/models`). Pass through the upstream backend's API key.
 - **Streaming response proxying (SSE)** — Transparently proxy `stream: true` responses as Server-Sent Events back to the client. Aggregate streamed chunks internally for audit and token counting.
 - **Multi-backend routing** — When a backend profile has multiple backends assigned, implement a routing strategy. *Interim solution: Use client IP-based sticky sessions. This requires ensuring the true client IP header (e.g., X-Forwarded-For) is correctly passed through Traefik or the deployment's ingress gateway.*
 - **Error handling and upstream error passthrough** — Gracefully handle upstream errors (timeouts, 5xx, connection failures) and return appropriate OpenAI-compatible error responses to the client.
+
+---
+
+## Allowed Models Filtering
+
+Backend profiles can optionally restrict which models are available through the profile. This requires changes across schema, APIs, UI, and the proxy engine.
+
+- **Database schema — allowed_models column** — Add an `allowed_models` text column to the `backend_profiles` table to store a comma-separated list of permitted model names. An empty value means all models are allowed. Requires an Alembic migration.
+- **Config seeding support** — Allow `allowed_models` to be specified in `config.yaml` backend profile definitions and seeded on startup.
+- **Admin API — allowed_models in profile CRUD** — Update the profile create/update API endpoints (`/admin/api/profiles`) to accept and return the `allowed_models` field.
+- **Admin UI — allowed_models on profiles page** — Add an allowed models input field to the backend profile create/edit forms in the admin panel. Display the configured models in the profile list/detail view.
+- **Portal UI — show allowed models** — Display the allowed models for each profile in the user portal so users know which models they can use through their API keys.
+- **Proxy — model request validation** — In the `/v1/*` proxy middleware, extract the `model` field from incoming request bodies (e.g. `/v1/chat/completions`, `/v1/completions`) and reject requests with a 403 if the model is not in the profile's allowed list.
+- **Proxy — filter /v1/models responses** — When proxying `/v1/models` list responses from upstream backends, filter the returned model list to include only models permitted by the profile's allowed list.
+- **Allowed models filtering tests** — End-to-end tests verifying: model request blocking, `/v1/models` response filtering, and unrestricted access when allowed_models is empty. Depends on proxy engine.
 
 ---
 
