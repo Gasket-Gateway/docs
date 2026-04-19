@@ -1,0 +1,117 @@
+/*
+ * Gasket Gateway — MkDocs Material Overrides
+ *
+ * Keeps the Gasket blue colour scheme and the logo tweaks.
+ * Everything else defers to the stock Material theme.
+ */
+
+/* ═══════════════════════════════════════════════════════════════════
+   PALETTE — Light mode
+   ═══════════════════════════════════════════════════════════════════ */
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: #2563eb;
+  --md-primary-fg-color--light: #3b82f6;
+  --md-primary-fg-color--dark: #1d4ed8;
+  --md-accent-fg-color: #2563eb;
+  --md-typeset-a-color: #2563eb;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PALETTE — Dark mode
+   ═══════════════════════════════════════════════════════════════════ */
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #3b82f6;
+  --md-primary-fg-color--light: #60a5fa;
+  --md-primary-fg-color--dark: #2563eb;
+  --md-accent-fg-color: #3b82f6;
+  --md-typeset-a-color: #60a5fa;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   LOGO — Size and hide duplicate site title
+   ═══════════════════════════════════════════════════════════════════ */
+.md-header__button.md-logo img {
+  height: 36px;
+  width: auto;
+}
+
+/* Hide the site title text — the logo SVG already contains "GASKET" */
+.md-header__topic .md-ellipsis {
+  display: none;
+}
+
+/* Native Lightbox */
+.lightbox-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    cursor: zoom-out;
+}
+
+.lightbox-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.lightbox-img {
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    transform: scale(0.95);
+    transition: transform 0.2s ease;
+}
+
+.lightbox-overlay.active .lightbox-img {
+    transform: scale(1);
+}
+
+.lightbox-controls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 10000;
+}
+
+.lightbox-btn {
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 4px;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.lightbox-btn:hover {
+    background: rgba(0, 0, 0, 0.9);
+    border-color: white;
+    transform: scale(1.05);
+}
+
+.lightbox-close {
+    margin-left: 10px;
+    background: rgba(200, 0, 0, 0.6);
+}
+
+.lightbox-close:hover {
+    background: rgba(220, 0, 0, 0.9);
+}
