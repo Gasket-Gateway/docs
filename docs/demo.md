@@ -11,10 +11,20 @@ The dashboard provides a quick overview of connection health and usage metrics (
 
 ![Portal Dashboard](assets/demo/portal_dashboard.png)
 
+### Backend Profiles
+Users can view the backend profiles they have been granted access to via their group memberships.
+
+![Backend Profiles](assets/demo/portal_profiles.png)
+
 ### API Keys
 Users can generate and revoke their own API keys, scoping them to specific backend profiles they have been granted access to.
 
 ![API Keys](assets/demo/portal_keys.png)
+
+### Creating an API Key
+A modal interface allows users to name their key, select a backend profile, and set an expiry date.
+
+![Create API Key Modal](assets/demo/portal_keys_modal_add.png)
 
 ---
 
@@ -32,6 +42,11 @@ Define the upstream inference endpoints (e.g. internal vLLM clusters or external
 
 ![Admin Backends](assets/demo/admin_backends.png)
 
+### Adding a Backend
+Admins can easily add new inference endpoints via a comprehensive modal form.
+
+![Add Backend Modal](assets/demo/admin_backends_modal_add.png)
+
 ### Policies
 Create and version terms-of-use policies that users must accept before using specific backend profiles.
 
@@ -42,7 +57,29 @@ Group backends together, assign mandatory policies, and configure audit logging 
 
 ![Admin Profiles](assets/demo/admin_profiles.png)
 
+### Creating a Profile
+The profile creation modal supports advanced settings like load balancing algorithms and quota enforcement.
+
+![Create Profile Modal](assets/demo/admin_profiles_modal_add.png)
+
 ### API Key Management
 View, revoke, or restore any API key across the entire system.
 
 ![Admin Keys](assets/demo/admin_keys.png)
+
+---
+
+## UI Component Demo
+
+The Gasket Gateway uses a custom-built, modern neo-brutalist design system.
+
+### Core Typography and Buttons
+Showcasing the updated modern monospace fonts and primary interaction components.
+
+![UI Demo Top](assets/demo/ui_demo_top.png)
+
+### Cards and Data Tables
+Demonstrating interactive cards, progress bars, and complex sorting tables.
+
+![UI Demo Middle](assets/demo/ui_demo_middle.png)
+
