@@ -8,7 +8,7 @@ Outstanding features and tasks derived from comparing the [requirements](require
 
 The core proxy that sits between API clients and OpenAI-compliant backends. This is the central feature that all monitoring, audit, and quota systems depend on.
 
-- **Multi-backend routing** — When a backend profile has multiple backends assigned, implement a routing strategy. *Interim solution: Use client IP-based sticky sessions. This requires ensuring the true client IP header (e.g., X-Forwarded-For) is correctly passed through Traefik or the deployment's ingress gateway.*
+- **Multi-backend routing** — When a backend profile has multiple backends assigned, implement a routing strategy. _Interim solution: Use client IP-based sticky sessions. This requires ensuring the true client IP header (e.g., X-Forwarded-For) is correctly passed through Traefik or the deployment's ingress gateway._
 
 ---
 
@@ -174,6 +174,10 @@ _# no current tasks_
 
 - **Refactor UI Theme** — Replace the current neo-brutalism design with a more professional, modern theme.
 - **Remove Uppercase Transformations** — Ensure all UI strings retain their intended casing rather than being forced to uppercase.
+- **Admin Panel Navigation** — Drop the tabbed navigation box. Use separate pages for each admin section.
+- **Top Navbar Consistency** — Implement a consistent top navbar across the board with buttons for each section page and a corresponding title.
+- **Environment-Specific Theme Colors** — Use a blue button theme for the top navbar on user portal pages, and a red button theme for admin panel pages.
+- **Page Title Stamps** — Display the page title along with a tilted "Portal" stamp (blue) for user portal pages, and a tilted "Admin Panel" stamp (red) for admin pages.
 
 ---
 
@@ -199,7 +203,6 @@ _# no current tasks_
 
 - **Delete old monolithic templates** — `gasket/app/templates/portal.html` (35KB) and `gasket/app/templates/admin.html` (88KB) are no longer referenced by any route. They are leftovers from the template refactoring in 0.1.5 and should be deleted.
 - **Delete old monolithic test files** — `gasket/tests/test_api_keys.py` (47KB) and `gasket/tests/test_policies.py` (25KB) exist alongside the modular `tests/api_keys/` and `tests/policies/` directories. If the modular versions are the active ones, these old files should be deleted.
-
 
 ---
 
