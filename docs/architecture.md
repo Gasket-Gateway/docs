@@ -33,8 +33,14 @@ The development environment provides a high-availability Docker Compose configur
 
 ## Endpoints
 
-| Endpoint   | Description                                             |
-| ---------- | ------------------------------------------------------- |
-| `/`        | Portal UI                                               |
-| `/health`  | Health check — returns `200 OK`                         |
-| `/metrics` | Prometheus metrics (aggregated across all HA instances) |
+| Endpoint       | Description                                                          |
+| -------------- | -------------------------------------------------------------------- |
+| `/`            | Portal UI                                                            |
+| `/keys`        | Portal API key management UI                                         |
+| `/api/*`       | Portal JSON API                                                      |
+| `/auth/*`      | OIDC login callback routes                                           |
+| `/admin/*`     | Admin panel UI routes                                                |
+| `/admin/api/*` | Admin JSON API                                                       |
+| `/health`      | Health check — returns `200 OK` (Port `5000`)                        |
+| `/metrics`     | Prometheus metrics (aggregated) (Port `9050` via `metrics_server.py`)|
+| `/health`      | Metrics server health check (Port `9050` via `metrics_server.py`)    |

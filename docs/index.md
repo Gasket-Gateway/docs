@@ -30,10 +30,23 @@ Gasket is an API gateway for OpenAI-compliant inference backends. It provides a 
 - [Architecture](architecture.md) — Component overview and technology stack
 - [Requirements](requirements.md) — Detailed functional requirements
 - [Development Environment](development.md) — Local dev setup guide
-- [Helm Deployment](helm.md) — Kubernetes deployment
+- [Helm Deployment](deployment.md#helm-deployment) — Kubernetes deployment
 
 !!! note "Open WebUI Integration"
-Gasket supports extracting Open WebUI user identity from request headers, enabling per-Open-WebUI-user metrics, quotas, and audit records. See [Open WebUI Integration](open-webui.md).
+Gasket supports extracting Open WebUI user identity from request headers, enabling per-Open-WebUI-user metrics, quotas, and audit records. See [Open WebUI Integration](portal-and-gateway.md#open-webui-integration).
 
 !!! note "VSCode Continue Extension"
-Gasket can generate a VSCode Continue plugin config snippet for any API key. See [API Key Management](api-keys.md).
+Gasket can generate a VSCode Continue plugin config snippet for any API key. See [API Key Management](portal-and-gateway.md#api-key-management).
+
+
+# About Gasket Gateway
+
+Hi,
+
+Yes I am a 1 person team.
+
+Yes Gasket Gateway is vibe coded.
+
+Yes it should be used with caution.
+
+I am a generalist platform engineer based in Australia, and I made Gasket Gateway because I wanted to see what is possible with the power of AI tooling on my side. Feel free to use Gasket Gateway for your own purposes (provided you adhere to the Apache 2.0 licence). Also, feel free to submit issues on GitHub and I'll see if it is something I can fix/incorporate. I will be upfront in that I may not take on feature requests or accept pull requests as I have my own use cases for Gasket Gateway and would prefer not to deviate from my own requirements.

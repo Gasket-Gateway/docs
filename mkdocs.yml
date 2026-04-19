@@ -42,21 +42,10 @@ extra_css:
 nav:
   - Home: index.md
   - Architecture: architecture.md
-  - Project Requirements: requirements.md
   - Configuration Reference: configuration.md
-  - Portal & Gateway:
-      - API Key Management: api-keys.md
-      - Monitoring & Quotas: quotas.md
-      - Audit: audit.md
-      - Open WebUI Integration: open-webui.md
-      - Admin Panel: admin.md
-  - Development:
-      - Development Environment: development.md
-      - Testing: dev-test.md
-  - Deployment:
-      - Helm: helm.md
-      - Schema Management: schema.md
-  - About: about.md
+  - Portal & Gateway: portal-and-gateway.md
+  - Development & Testing: development.md
+  - Deployment: deployment.md
 
 markdown_extensions:
   - admonition

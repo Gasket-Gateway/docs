@@ -173,9 +173,7 @@ _# no current tasks_
 
 ## Documentation
 
-- **Fix `api-keys.md` Continue snippet description** — The doc describes the VSCode Continue config snippet as if it's already implemented ("visible on the key detail page"). It should be marked as planned/coming soon until the feature is built.
-- **Fix `architecture.md` endpoints table** — The endpoints table only lists `/`, `/health`, and `/metrics`. It's missing `/admin/*`, `/keys`, `/api/*`, `/admin/api/*`, `/auth/*`. Also clarify that `/metrics` runs on port 9050, not 5000.
-- **Fix `architecture.md` metrics port description** — The doc implies `/metrics` is served alongside `/` on the same port, but it actually runs on a separate port (9050) via `metrics_server.py`.
+- **Automated Screenshot Demo Capture** — Build a Selenium-based suite to execute core user flows and capture up-to-date screenshots into an ignored local folder. Create an agent workflow to automatically copy these screenshots into the `docs` repo and update a `demo.md` page with the latest visuals.
 
 ---
 
@@ -195,3 +193,6 @@ _# no current tasks_
 - **Quota enforcement tests** — Verify quota block/unblock lifecycle, all quota scopes, and 429 responses. Depends on quota engine.
 - **Open WebUI header tests** — Verify header extraction, fallback behaviour, and identity propagation to audit/metrics/quotas. Depends on Open WebUI header support.
 - **VSCode Continue snippet tests** — Verify correct snippet generation for opted-in keys. Depends on Continue integration.
+- **RBAC testing uplift (High Priority)** — Uplift the testing that uses the env var to allow specifying the username and groups so that tests can simulate RBAC cases without needing OIDC to be online.
+- **Full RBAC endpoint testing (High Priority)** — Create comprehensive tests for full RBAC testing of each endpoint. Depends on the RBAC testing uplift.
+- **Selenium RBAC Web UI testing (High Priority)** — Add Selenium tests to verify RBAC flows from the web UI. Depends on the RBAC testing uplift.

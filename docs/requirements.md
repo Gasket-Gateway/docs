@@ -49,9 +49,9 @@ Backend profiles define how access to one or more OpenAI-compliant backends is g
 - Whether full request/response content audit is enabled
 - List of OpenAI backends
 - Default or enforced API key expiry duration
-- Usage quota configurations (configurable X tokens per Y hour block, see [Monitoring & Quotas](quotas.md))
+- Usage quota configurations (configurable X tokens per Y hour block, see [Monitoring & Quotas](portal-and-gateway.md#monitoring-quotas))
 - Maximum number of active API keys per user
-- Whether Open WebUI header support is enabled (see [Open WebUI Integration](open-webui.md))
+- Whether Open WebUI header support is enabled (see [Open WebUI Integration](portal-and-gateway.md#open-webui-integration))
 - Backend profiles are created and managed via the admin portal
 - Profiles can optionally be pre-defined in `config.yaml` — these are automatically populated into the database on startup and are **read-only** in the admin portal (cannot be edited or deleted via the UI)
 - Admin-created profiles (not from config) can be freely edited and deleted
@@ -110,7 +110,7 @@ OpenAI backends represent individual upstream inference endpoints:
 
 ## API Key Management
 
-See [API Key Management](api-keys.md) for the full user flow.
+See [API Key Management](portal-and-gateway.md#api-key-management) for the full user flow.
 
 **Key creation:**
 
@@ -139,7 +139,7 @@ See [API Key Management](api-keys.md) for the full user flow.
 
 ## Monitoring & Quotas
 
-See [Monitoring & Quotas](quotas.md) for full details.
+See [Monitoring & Quotas](portal-and-gateway.md#monitoring-quotas) for full details.
 
 ### Prometheus Metrics Labels
 
@@ -157,7 +157,7 @@ All metrics carry the labels: `user`, `api_key`, `backend_profile`, `openai_back
 
 ## Audit
 
-See [Audit](audit.md) for full details.
+See [Audit](portal-and-gateway.md#audit) for full details.
 
 - Audit records written to OpenSearch
 - Audit record contains: user, api_key, model, backend, timestamps, token counts
@@ -166,7 +166,7 @@ See [Audit](audit.md) for full details.
 
 ## Open WebUI Header Support
 
-See [Open WebUI Integration](open-webui.md) for full details.
+See [Open WebUI Integration](portal-and-gateway.md#open-webui-integration) for full details.
 
 - Backend profiles can opt-in to trusting Open WebUI user identity headers
 - When enabled on the profile, users must also opt-in per API key
@@ -175,7 +175,7 @@ See [Open WebUI Integration](open-webui.md) for full details.
 
 ## Admin Panel
 
-See [Admin Panel](admin.md) for full details.
+See [Admin Panel](portal-and-gateway.md#admin-panel) for full details.
 
 - Connection status for: PostgreSQL, OIDC provider, OpenSearch, all OpenAI backends
 - **OpenAI backend management:** add, edit, and delete backends (config-defined backends are read-only)

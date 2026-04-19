@@ -1,3 +1,10 @@
+# Helm Deployment
+
+Gasket can be deployed to Kubernetes using the Helm charts provided in the `helm` repository.
+
+Source: [`helm`](https://github.com/Gasket-Gateway/helm) repository.
+
+
 # Schema Management
 
 Gasket uses [Alembic](https://alembic.sqlalchemy.org/) to manage PostgreSQL schema changes. Migrations are versioned Python files that live in the `migrations/versions/` directory and are tracked in version control alongside application code.
@@ -105,3 +112,5 @@ def downgrade() -> None:
 - **Every migration must have both `upgrade()` and `downgrade()`** — to support rollbacks
 - **Migrations are append-only** — never edit a migration that has been applied to any environment
 - **Test both directions** — run `upgrade` then `downgrade` to verify reversibility
+
+
