@@ -67,19 +67,4 @@ View, revoke, or restore any API key across the entire system.
 
 ![Admin Keys](assets/demo/admin_keys.png)
 
----
-
-## UI Component Demo
-
-The Gasket Gateway uses a custom-built, modern neo-brutalist design system.
-
-### Core Typography and Buttons
-Showcasing the updated modern monospace fonts and primary interaction components.
-
-![UI Demo Top](assets/demo/ui_demo_top.png)
-
-### Cards and Data Tables
-Demonstrating interactive cards, progress bars, and complex sorting tables.
-
-![UI Demo Middle](assets/demo/ui_demo_middle.png)
 
