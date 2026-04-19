@@ -11,7 +11,7 @@ The core proxy that sits between API clients and OpenAI-compliant backends. This
 - **API key authentication middleware** — Accept incoming requests on `/v1/*` bearing a `gsk_*` API key (via `Authorization: Bearer` header). Validate the key against the database, check it is active (not revoked, not expired), and resolve the associated user, backend profile, and backends.
 - **Request proxying to OpenAI backends** — Forward authenticated requests from `/v1/*` to the upstream backend(s) defined on the resolved backend profile. The proxy path matches the OpenAI API convention (e.g. `/v1/chat/completions`, `/v1/completions`, `/v1/models`). Pass through the upstream backend's API key.
 - **Streaming response proxying (SSE)** — Transparently proxy `stream: true` responses as Server-Sent Events back to the client. Aggregate streamed chunks internally for audit and token counting.
-- **Multi-backend routing** — When a backend profile has multiple backends assigned, implement a routing strategy. *Note: Needs further research on how to implement sticky sessions based on chat session IDs to leverage upstream context caching.*
+- **Multi-backend routing** — When a backend profile has multiple backends assigned, implement a routing strategy. *Interim solution: Use client IP-based sticky sessions. This requires ensuring the true client IP header (e.g., X-Forwarded-For) is correctly passed through Traefik or the deployment's ingress gateway.*
 - **Error handling and upstream error passthrough** — Gracefully handle upstream errors (timeouts, 5xx, connection failures) and return appropriate OpenAI-compatible error responses to the client.
 
 ---
@@ -159,9 +159,16 @@ _# no current tasks_
 
 ---
 
+## User Interface
+
+- **Refactor UI Theme** — Replace the current neo-brutalism design with a more professional, modern theme.
+- **Remove Uppercase Transformations** — Ensure all UI strings retain their intended casing rather than being forced to uppercase.
+
+---
+
 ## Deployment & Infrastructure
 
-_# no current tasks_
+- **Investigate HA container startup issues** — Gasket instances in the HA configuration (`docker-compose.yaml`) fail to resolve or connect to local dev hostnames (e.g., Authentik) on startup, resulting in 500 errors during login. Investigate networking/DNS differences between the HA and single-instance configurations.
 
 ---
 
@@ -193,6 +200,4 @@ _# no current tasks_
 - **Quota enforcement tests** — Verify quota block/unblock lifecycle, all quota scopes, and 429 responses. Depends on quota engine.
 - **Open WebUI header tests** — Verify header extraction, fallback behaviour, and identity propagation to audit/metrics/quotas. Depends on Open WebUI header support.
 - **VSCode Continue snippet tests** — Verify correct snippet generation for opted-in keys. Depends on Continue integration.
-- **RBAC testing uplift (High Priority)** — Uplift the testing that uses the env var to allow specifying the username and groups so that tests can simulate RBAC cases without needing OIDC to be online.
-- **Full RBAC endpoint testing (High Priority)** — Create comprehensive tests for full RBAC testing of each endpoint. Depends on the RBAC testing uplift.
 - **Selenium RBAC Web UI testing (High Priority)** — Add Selenium tests to verify RBAC flows from the web UI. Depends on the RBAC testing uplift.
