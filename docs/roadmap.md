@@ -180,7 +180,7 @@ _# no current tasks_
 
 ## Documentation
 
-- **Automated Screenshot Demo Capture** — Build a Selenium-based suite to execute core user flows and capture up-to-date screenshots into an ignored local folder. Create an agent workflow to automatically copy these screenshots into the `docs` repo and update a `demo.md` page with the latest visuals.
+_# no current tasks_
 
 ---
 

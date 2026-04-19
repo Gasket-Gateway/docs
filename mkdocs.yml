@@ -42,6 +42,7 @@ extra_css:
 nav:
   - Home: index.md
   - Architecture: architecture.md
+  - UI Demo: demo.md
   - Configuration Reference: configuration.md
   - Portal & Gateway: portal-and-gateway.md
   - Development & Testing: development.md
